@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>RODB - Simulator</title>
+    <meta content="RODBはMMO「Ragnarok Online」に関するデータを保管するサイトです" name="description">
+    <meta content="ro,jro,ragnaok,ragnarok online,マロコロ" name="keywords">
+    <meta content="index, follow" name="Robots">
+
+    <meta property="og:site_name" content="RODB" />
+    <meta property="og:description" content="RODBはMMO「Ragnarok Online」に関するデータを保管するサイトです" />
+    <meta property="og:url" content="https://rodb.aws.0nyx.net/">
+    <meta property="og:image" content="https://rodb.aws.0nyx.net/favicon.png">
+    <meta property="og:type" content="website" />
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+        rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="/assets/vendor/aos/aos.css" rel="stylesheet">
+    <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="/assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+    <link href="/assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+    <link href="/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link href="/assets/css/style.css" rel="stylesheet">
+
+    <link href="/assets/css/rodb.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+
+    <!-- Simulator -->
+    <link rel="stylesheet" href="https://pyscript.net/releases/2023.11.1/core.css" />
+    <script type="module" src="https://pyscript.net/releases/2023.11.1/core.js"></script>
+
+    <!-- =======================================================
+  * Template Name: OnePage - v4.7.0
+  * Template URL: https://bootstrapmade.com/onepage-multipurpose-bootstrap-template/
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+</head>
+
+<body>
+
+    <!-- ======= Header ======= -->
+    <header id="header" class="fixed-top">
+        <div class="container d-flex align-items-center justify-content-between">
+
+            <h1 class="logo"><a href="/">RODB</a></h1>
+            <!-- Uncomment below if you prefer to use an image logo -->
+            <!-- <a href="index.html" class="logo"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
+
+            <nav id="navbar" class="navbar">
+                <ul>
+                    <li><a class="nav-link scrollto active" href="/">Home</a></li>
+                    <li><a class="nav-link scrollto" href="/#services">Services</a></li>
+                    <li><a class="nav-link scrollto" href="/#team">Team</a></li>
+                </ul>
+                <i class="bi bi-list mobile-nav-toggle"></i>
+            </nav><!-- .navbar -->
+
+        </div>
+    </header><!-- End Header -->
+
+    <!-- ======= Hero Section ======= -->
+    <section id="hero" class="d-flex align-items-center">
+        <div class="container position-relative" data-aos="fade-up" data-aos-delay="100">
+            <div class="row justify-content-center">
+                <div class="col-xl-7 col-lg-9 text-center">
+                    <h1>RODB</h1>
+                    <h2>Japan MMO: Ragnarok Online Database</h2>
+                </div>
+            </div>
+
+        </div>
+    </section><!-- End Hero -->
+
+    <main id="main">
+
+        <!-- ======= Breadcrumbs ======= -->
+        <section class="breadcrumbs">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2>Simulator</h2>
+                    <ol>
+                        <li><a href="/">Index</a></li>
+                        <li>Simulator</li>
+                    </ol>
+                </div>
+            </div>
+        </section><!-- End Breadcrumbs -->
+
+        <selection class="inner-page">
+
+            <div class="container border">
+                <div class="row bg-primary text-white">
+                    <h2>基本ステータス</h2>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label for="status_lv_base" class="form-label">Lv</label>
+                    </div>
+                    <div class="col-md-2">
+                        <input id="status_lv_base" type="number" class="form-number" min="1" max="99" value="1">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="status_lv_job" class="form-label">Job Lv</label>
+                    </div>
+                    <div class="col-md-2">
+                        <input id="status_lv_job" type="number" class="form-number" min="1" max="9" value="1">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="status_job_class" class="form-label">職業</label>
+                    </div>
+                    <div class="col-md-2">
+                        <select id="status_job_class" class="form-select" aria-label="職業を選択">
+
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-1">
+                        <label for="status_str_basic" class="form-label">Str</label>
+                    </div>
+                    <div class="col-md-3">
+                        <input id="status_str_basic" type="number" class="form-number" min="1" max="99" value="1">
+                        + <input id="status_str_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
+                    </div>
+                    <div class="col-md-1">
+                        <label for="status_agi_basic" class="form-label">Agi</label>
+                    </div>
+                    <div class="col-md-3">
+                        <input id="status_agi_basic" type="number" class="form-number" min="1" max="99" value="1">
+                        + <input id="status_agi_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
+                    </div>
+                    <div class="col-md-1">
+                        <label for="status_vit_basic" class="form-label">Vit</label>
+                    </div>
+                    <div class="col-md-3">
+                        <input id="status_vit_basic" type="number" class="form-number" min="1" max="99" value="1">
+                        + <input id="status_vit_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-1">
+                        <label for="status_int_basic" class="form-label">Int</label>
+                    </div>
+                    <div class="col-md-3">
+                        <input id="status_int_basic" type="number" class="form-number" min="1" max="99" value="1">
+                        + <input id="status_int_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
+                    </div>
+                    <div class="col-md-1">
+                        <label for="status_dex_basic" class="form-label">Dex</label>
+                    </div>
+                    <div class="col-md-3">
+                        <input id="status_dex_basic" type="number" class="form-number" min="1" max="99" value="1">
+                        + <input id="status_dex_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
+                    </div>
+                    <div class="col-md-1">
+                        <label for="status_luk_basic" class="form-label">Luk</label>
+                    </div>
+                    <div class="col-md-3">
+                        <input id="status_luk_basic" type="number" class="form-number" min="1" max="99" value="1">
+                        + <input id="status_luk_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container">
+                <hr />
+            </div>
+
+            <div class="container border">
+                <div class="row">
+                    <div class="col-md-1 boarder">
+                        Max HP<br>
+                        <input id="status_hp_max" type="number" class="form-number" min="0" max="999999" value="1" disabled readonly>
+                    </div>
+                    <div class="col-md-1 boarder">
+                        Max SP<br>
+                        <input id="status_sp_max" type="number" class="form-number" min="0" max="999999" value="1" disabled readonly>
+                    </div>
+                    <div class="col-md-2 boarder">
+                        ATK<br>
+                        <input id="status_atk_basic" type="number" class="form-number" min="0" max="999" value="1" disabled readonly>
+                        +<input id="status_atk_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
+                    </div>
+                    <div class="col-md-2 boarder">
+                        DEF<br>
+                        <input id="status_def_basic" type="number" class="form-number" min="0" max="999" value="1" disabled readonly>
+                        +<input id="status_def_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
+                    </div>
+                    <div class="col-md-2 boarder">
+                        MDEF<br>
+                        <input id="status_mdef_basic" type="number" class="form-number" min="0" max="999" value="1" disabled readonly>
+                        +<input id="status_mdef_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
+                    </div>
+                    <div class="col-md-1 boarder">
+                        Hit<br>
+                        <input id="status_hit" type="number" class="form-number" min="0" max="99999" value="1" disabled readonly>
+                    </div>
+                    <div class="col-md-1 boarder">
+                        Flee<br>
+                        <input id="status_flee" type="number" class="form-number" min="0" max="99999" value="1" disabled readonly>
+                    </div>
+                    <div class="col-md-1 boarder">
+                        完全回避<br>
+                        <input id="status_complete_avoidance" type="number" class="form-number" min="0" max="999" value="1" disabled readonly>
+                    </div>
+                    <div class="col-md-1 boarder">
+                        Critical<br>
+                        <input id="status_critical" type="number" class="form-number" min="0" max="999" value="1" disabled readonly>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 boarder">
+                        MATK<br>
+                        <input id="status_matk_basic" type="number" class="form-number" min="0" max="999" value="1" disabled readonly>
+                        +<input id="status_matk_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
+                    </div>
+                    <div class="col-md-1 boarder">
+                        ASPD<br>
+                        <input id="status_aspd" type="number" class="form-number" min="0" max="999" value="1.0" disabled readonly>
+                    </div>
+                    <div class="col-md-1 boarder">
+                        HP回復量<br>
+                        <input id="status_hp_recovery" type="number" class="form-number" min="0" max="999" value="1" disabled readonly>
+                    </div>
+                    <div class="col-md-1 boarder">
+                        SP回復量<br>
+                        <input id="status_sp_recovery" type="number" class="form-number" min="0" max="999" value="1" disabled readonly>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container">
+                <hr />
+            </div>
+
+            <div class="container border">
+                <div class="mb-3">
+                    <label for="export_json" class="form-label">JSON Data</label>
+                    <textarea class="form-control font-futur" id="export_json" rows="10"></textarea>
+                    <button id="button_import_json" type="button" class="btn btn-primary">JSONからインポート</button>
+                </div>
+                <div class="mb-3 text-wrap">
+                    <a id="export_url" class="btn btn-success" href="#" target="_blank">Export URL</a>
+                </div>
+            </div>
+        </selection>
+    </main><!-- End #main -->
+
+    <!-- ======= Footer ======= -->
+    <footer id="footer">
+
+        <div class="footer-top">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-lg-3 col-md-6 footer-contact">
+                        <h3>RODB</h3>
+                        <p>
+                        </p>
+                    </div>
+
+                    <div class="col-lg-2 col-md-6 footer-links">
+                        <h4>Useful Links</h4>
+                        <ul>
+                            <li><i class="bx bx-chevron-right"></i> <a href="/#">Home</a></li>
+                            <li><i class="bx bx-chevron-right"></i> <a href="/#services">Services</a></li>
+                            <li><i class="bx bx-chevron-right"></i> <a href="/#teams">Teams</a></li>
+                            <li><i class="bx bx-chevron-right"></i> <a
+                                    href="https://www.amazon.co.jp/hz/wishlist/ls/2EK058T5A6BN7">Amazon欲しいものリスト</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="container d-md-flex py-4">
+
+            <div class="me-md-auto text-center text-md-start">
+                <div class="copyright">
+                    &copy; Copyright <strong><span>0nyx.net</span></strong>. All Rights Reserved<br>
+                    当サイトで公開している元データは下記に帰属しており、再配布は禁止しております<br>
+                    &copy; Gravity Co., Ltd. &amp; LeeMyoungJin(studio DTDS) All rights reserved.<br>
+                    &copy; GungHo Online Entertainment, Inc. All Rights Reserved.
+                </div>
+                <div class="credits">
+                    <!-- All the links in the footer should remain intact. -->
+                    <!-- You can delete the links only if you purchased the pro version. -->
+                    <!-- Licensing information: https://bootstrapmade.com/license/ -->
+                    <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/onepage-multipurpose-bootstrap-template/ -->
+                    Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+                </div>
+            </div>
+            <div class="social-links text-center text-md-right pt-3 pt-md-0">
+                <a href="https://twitter.com/_m10i" class="twitter"><i class="bx bxl-twitter"></i></a>
+            </div>
+        </div>
+    </footer><!-- End Footer -->
+
+    <!-- Modal -->
+    <dialog id="daialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="modal_information_label">Information</h5>
+        </div>
+        <div id="dialog_information_message_div" class="modal-body">MESSAGE</div>
+        <div class="modal-footer">
+            <button id="daialog_button_close" type="button" class="btn btn-secondary">Close</button>
+        </div>
+        </div>
+    </dialog>
+
+    <div id="preloader"></div>
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+            class="bi bi-arrow-up-short"></i></a>
+
+    <!-- Vendor JS Files -->
+    <script src="/assets/vendor/purecounter/purecounter.js"></script>
+    <script src="/assets/vendor/aos/aos.js"></script>
+    <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/vendor/glightbox/js/glightbox.min.js"></script>
+    <script src="/assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+    <script src="/assets/vendor/swiper/swiper-bundle.min.js"></script>
+    <script src="/assets/vendor/php-email-form/validate.js"></script>
+
+    <script type="py" src="/simulator/app_v1.py" config="/simulator/pyscript.json"></script>
+
+    <!-- Template Main JS File -->
+    <script src="/assets/js/main.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YCM65EZMQL"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-YCM65EZMQL');
+    </script>
+</body>
+
+</html>
