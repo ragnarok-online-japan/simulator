@@ -7,13 +7,15 @@ import urllib.parse
 from pyscript import document
 from js import location,URLSearchParams,XMLHttpRequest
 
+import package
+
 class Simulator:
     _initialized: bool = False
     _export_json_format_version: int = 1
     _prefix_url: str = "/"
     _suffix_url: str = "index.html"
 
-    status: dict = {}
+    dom_elements: dict[str] = {}
 
     _status_basic: tuple = ("str", "agi", "vit", "int", "dex", "luk")
     _status_special: tuple = ("pow", "sta", "wis", "spl", "con", "crt")
@@ -22,37 +24,37 @@ class Simulator:
         self._prefix_url = prefix_url
         self._suffix_url = suffix_url
 
-        self.status["base_lv"] = document.getElementById("status_base_lv")
-        self.status["base_lv"].oninput = self.calculation
+        self.dom_elements["base_lv"] = document.getElementById("status_base_lv")
+        self.dom_elements["base_lv"].oninput = self.calculation
 
-        self.status["job_lv"] = document.getElementById("status_job_lv")
-        self.status["job_lv"].oninput = self.calculation
+        self.dom_elements["job_lv"] = document.getElementById("status_job_lv")
+        self.dom_elements["job_lv"].oninput = self.calculation
 
-        self.status["job_class"] = document.getElementById("status_job_class")
-        self.status["job_class"].oninput = self.calculation
+        self.dom_elements["job_class"] = document.getElementById("status_job_class")
+        self.dom_elements["job_class"].oninput = self.calculation
 
         for key in self._status_basic:
-            self.status[key]: dict = {
+            self.dom_elements[key]: dict = {
                 "basic"  : document.getElementById(f"status_{key}_basic"),
-                "bounus" : document.getElementById(f"status_{key}_bounus"),
+                "bonus" : document.getElementById(f"status_{key}_bonus"),
             }
-            self.status[key]["basic"].oninput = self.calculation
+            self.dom_elements[key]["basic"].oninput = self.calculation
 
         # 特性ステータス
         for key in self._status_special:
-            self.status[key]: dict = {
+            self.dom_elements[key]: dict = {
                 "basic"  : document.getElementById(f"status_{key}_basic"),
-                "bounus" : document.getElementById(f"status_{key}_bounus"),
+                "bonus" : document.getElementById(f"status_{key}_bonus"),
             }
-            self.status[key]["basic"].oninput = self.calculation
+            self.dom_elements[key]["basic"].oninput = self.calculation
 
-        button_import_json = document.getElementById("button_import_json")
-        button_import_json.onclick = self.onclick_import_from_json
+        self.dom_elements["button_import_json"] = document.getElementById("button_import_json")
+        self.dom_elements["button_import_json"].onclick = self.onclick_import_from_json
 
-        self.export_json = document.getElementById("export_json")
+        self.dom_elements["textarea_import_json"] = document.getElementById("textarea_import_json")
 
-        daialog_button_close = document.getElementById("daialog_button_close")
-        daialog_button_close.onclick = self.close_dialog
+        self.dom_elements["daialog_button_close"] = document.getElementById("daialog_button_close")
+        self.dom_elements["daialog_button_close"].onclick = self.close_dialog
 
         xhr = XMLHttpRequest.new()
         xhr.open("GET", prefix_url + "data/job_classes.json", False)
@@ -72,14 +74,14 @@ class Simulator:
 
                 datalist_job_classes.appendChild(child_class)
 
-            self.status["job_class"].value = "novice"
+            self.dom_elements["job_class"].value = "novice"
 
         # initilzed finish
         self._initialized = True
 
     def onclick_import_from_json(self, event = None) -> None:
         try:
-            self.import_from_json(self.export_json.value)
+            self.import_from_json(self.dom_elements["textarea_import_json"].value)
             self.view_dialog("JSONからインポートしました")
         except Exception as ex:
             traceback.print_exception(ex)
@@ -103,21 +105,21 @@ class Simulator:
 
         if "status" in data_dict:
             if "base_lv" in data_dict["status"]:
-                self.status["base_lv"].value = data_dict["status"]["base_lv"]
+                self.dom_elements["base_lv"].value = data_dict["status"]["base_lv"]
 
             if "job_lv" in data_dict["status"]:
-                self.status["job_lv"].value = data_dict["status"]["job_lv"]
+                self.dom_elements["job_lv"].value = data_dict["status"]["job_lv"]
 
             if "job_class_id" in data_dict["status"]:
-                self.status["job_class"].value = self.data_job_classes[str(data_dict["status"]["job_class_id"])]["class"]
+                self.dom_elements["job_class"].value = self.data_job_classes[str(data_dict["status"]["job_class_id"])]["class"]
 
             for key in self._status_basic:
                 if key in data_dict["status"]:
-                    self.status[key]["basic"].value = data_dict["status"][key]
+                    self.dom_elements[key]["basic"].value = data_dict["status"][key]
 
             for key in self._status_special:
-                if key in data_dict["status"] and len(self.status[key]) > 0:
-                    self.status[key]["basic"].value = data_dict["status"][key]
+                if key in data_dict["status"] and len(self.dom_elements[key]) > 0:
+                    self.dom_elements[key]["basic"].value = data_dict["status"][key]
 
         if "skills" in data_dict:
             pass
@@ -138,11 +140,11 @@ class Simulator:
         return success
 
     def export_to_base64(self) -> None:
-        data_dict: dict[str] = {
+        data_json: dict[str] = {
             "version" : self._export_json_format_version,
             "status" : {
-                "base_lv" : int(self.status["base_lv"].value),
-                "job_lv" : int(self.status["job_lv"].value),
+                "base_lv" : int(self.dom_elements["base_lv"].value),
+                "job_lv" : int(self.dom_elements["job_lv"].value),
                 "job_class_id": 0
             },
             "skills": {
@@ -162,31 +164,32 @@ class Simulator:
         for key in self._status_basic:
             value: int = 0
             try:
-                value = int(self.status[key]["basic"].value)
+                value = int(self.dom_elements[key]["basic"].value)
             except ValueError:
                 pass
 
-            data_dict["status"][key] = value
+            data_json["status"][key] = value
 
         for key in self._status_special:
-            if key in self.status and len(self.status[key]) > 0:
+            if key in self.dom_elements and len(self.dom_elements[key]) > 0:
                 value: int = 0
                 try:
-                    value = int(self.status[key]["basic"].value)
+                    value = int(self.dom_elements[key]["basic"].value)
                 except ValueError:
                     pass
 
                 if value > 0:
-                    data_dict["status"][key] = value
+                    data_json["status"][key] = value
 
-        job_class = self.status["job_class"].value
+        job_class = self.dom_elements["job_class"].value
         if job_class is not None and job_class != "":
             job_class_ids = [key for key, value in self.data_job_classes.items() if value["class"] == job_class]
             if len(job_class_ids) > 0:
-                data_dict["status"]["job_class_id"] = int(job_class_ids[0])
+                data_json["status"]["job_class_id"] = int(job_class_ids[0])
+
         # dict => json
-        data_json = json.dumps(data_dict, indent=4)
-        self.export_json.value = data_json
+        data_json = json.dumps(data_json, indent=4)
+        self.dom_elements["textarea_import_json"].value = data_json
 
         # json => bz2 copressed
         data_compressed = bz2.compress(data_json.encode("utf-8"), compresslevel=9)
@@ -203,7 +206,20 @@ class Simulator:
             # initialize未完了の場合終了
             return
 
-        self.export_to_base64()
+        success: bool = True
+        print("[TRACE]", "Call def calculation")
+
+        try:
+            # calculation
+            package.str.calc_bonus(self.dom_elements)
+
+            pass
+        except Exception as ex:
+            success = False
+            traceback.print_exception(ex)
+
+        if success == True:
+            self.export_to_base64()
 
     def view_dialog(self, message: str = "") -> None:
         message_div = document.getElementById("dialog_information_message_div")
@@ -230,6 +246,7 @@ def main():
     if result_import is not None:
         if result_import == True:
             instance.view_dialog("インポートが完了しました")
+            instance.calculation()
         else:
             instance.view_dialog("*** ERROR ***\nインポートが失敗しました")
 
