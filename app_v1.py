@@ -3,40 +3,48 @@ import binascii
 import bz2
 import json
 import traceback
-from js import document,location,URLSearchParams
 import urllib.parse
+from pyscript import document
+from js import location,URLSearchParams,XMLHttpRequest
 
 class Simulator:
     _initialized: bool = False
     _export_json_format_version: int = 1
     _prefix_url: str = "/"
+    _suffix_url: str = "index.html"
 
-    def __init__(self, prefix_url = "/") -> None:
+    status: dict = {}
+
+    _status_basic: tuple = ("str", "agi", "vit", "int", "dex", "luk")
+    _status_special: tuple = ("pow", "sta", "wis", "spl", "con", "crt")
+
+    def __init__(self, prefix_url = "/", suffix_url="index.html") -> None:
         self._prefix_url = prefix_url
+        self._suffix_url = suffix_url
 
-        self.status_lv_base = document.getElementById("status_lv_base")
-        self.status_lv_base.oninput = self.calculation
+        self.status["base_lv"] = document.getElementById("status_base_lv")
+        self.status["base_lv"].oninput = self.calculation
 
-        self.status_lv_job = document.getElementById("status_lv_job")
-        self.status_lv_job.oninput = self.calculation
+        self.status["job_lv"] = document.getElementById("status_job_lv")
+        self.status["job_lv"].oninput = self.calculation
 
-        self.status_str_basic = document.getElementById("status_str_basic")
-        self.status_str_basic.oninput = self.calculation
+        self.status["job_class"] = document.getElementById("status_job_class")
+        self.status["job_class"].oninput = self.calculation
 
-        self.status_agi_basic = document.getElementById("status_agi_basic")
-        self.status_agi_basic.oninput = self.calculation
+        for key in self._status_basic:
+            self.status[key]: dict = {
+                "basic"  : document.getElementById(f"status_{key}_basic"),
+                "bounus" : document.getElementById(f"status_{key}_bounus"),
+            }
+            self.status[key]["basic"].oninput = self.calculation
 
-        self.status_vit_basic = document.getElementById("status_vit_basic")
-        self.status_vit_basic.oninput = self.calculation
-
-        self.status_int_basic = document.getElementById("status_int_basic")
-        self.status_int_basic.oninput = self.calculation
-
-        self.status_dex_basic = document.getElementById("status_dex_basic")
-        self.status_dex_basic.oninput = self.calculation
-
-        self.status_luk_basic = document.getElementById("status_luk_basic")
-        self.status_luk_basic.oninput = self.calculation
+        # 特性ステータス
+        for key in self._status_special:
+            self.status[key]: dict = {
+                "basic"  : document.getElementById(f"status_{key}_basic"),
+                "bounus" : document.getElementById(f"status_{key}_bounus"),
+            }
+            self.status[key]["basic"].oninput = self.calculation
 
         button_import_json = document.getElementById("button_import_json")
         button_import_json.onclick = self.onclick_import_from_json
@@ -46,13 +54,32 @@ class Simulator:
         daialog_button_close = document.getElementById("daialog_button_close")
         daialog_button_close.onclick = self.close_dialog
 
+        xhr = XMLHttpRequest.new()
+        xhr.open("GET", prefix_url + "data/job_classes.json", False)
+        xhr.setRequestHeader("Content-Type", "application/json")
+        xhr.send()
+        self.data_job_classes = json.loads(xhr.response)
+
+        if len(self.data_job_classes) > 0:
+            datalist_job_classes = document.getElementById("datalist_job_classes")
+            for idx in self.data_job_classes:
+                child_class = document.createElement("option")
+                data = self.data_job_classes[idx]
+
+                child_class.value = data["class"]
+                if "display_name" in data:
+                    child_class.label = data["display_name"]
+
+                datalist_job_classes.appendChild(child_class)
+
+            self.status["job_class"].value = "novice"
+
         # initilzed finish
         self._initialized = True
 
     def onclick_import_from_json(self, event = None) -> None:
         try:
             self.import_from_json(self.export_json.value)
-            self.export_to_base64() #base64にも反映
             self.view_dialog("JSONからインポートしました")
         except Exception as ex:
             traceback.print_exception(ex)
@@ -76,28 +103,21 @@ class Simulator:
 
         if "status" in data_dict:
             if "base_lv" in data_dict["status"]:
-                self.status_lv_base.value = data_dict["status"]["base_lv"]
+                self.status["base_lv"].value = data_dict["status"]["base_lv"]
 
             if "job_lv" in data_dict["status"]:
-                self.status_lv_job.value = data_dict["status"]["job_lv"]
+                self.status["job_lv"].value = data_dict["status"]["job_lv"]
 
-            if "str" in data_dict["status"]:
-                self.status_str_basic.value = data_dict["status"]["str"]
+            if "job_class_id" in data_dict["status"]:
+                self.status["job_class"].value = self.data_job_classes[str(data_dict["status"]["job_class_id"])]["class"]
 
-            if "agi" in data_dict["status"]:
-                self.status_agi_basic.value = data_dict["status"]["agi"]
+            for key in self._status_basic:
+                if key in data_dict["status"]:
+                    self.status[key]["basic"].value = data_dict["status"][key]
 
-            if "vit" in data_dict["status"]:
-                self.status_vit_basic.value = data_dict["status"]["vit"]
-
-            if "int" in data_dict["status"]:
-                self.status_int_basic.value = data_dict["status"]["int"]
-
-            if "dex" in data_dict["status"]:
-                self.status_dex_basic.value = data_dict["status"]["dex"]
-
-            if "luk" in data_dict["status"]:
-                self.status_luk_basic.value = data_dict["status"]["luk"]
+            for key in self._status_special:
+                if key in data_dict["status"] and len(self.status[key]) > 0:
+                    self.status[key]["basic"].value = data_dict["status"][key]
 
         if "skills" in data_dict:
             pass
@@ -121,14 +141,9 @@ class Simulator:
         data_dict: dict[str] = {
             "version" : self._export_json_format_version,
             "status" : {
-                "base_lv" : int(self.status_lv_base.value),
-                "job_lv" : int(self.status_lv_job.value),
-                "str" : int(self.status_str_basic.value),
-                "agi" : int(self.status_agi_basic.value),
-                "vit" : int(self.status_vit_basic.value),
-                "int" : int(self.status_int_basic.value),
-                "dex" : int(self.status_dex_basic.value),
-                "luk" : int(self.status_luk_basic.value)
+                "base_lv" : int(self.status["base_lv"].value),
+                "job_lv" : int(self.status["job_lv"].value),
+                "job_class_id": 0
             },
             "skills": {
 
@@ -144,6 +159,31 @@ class Simulator:
             }
         }
 
+        for key in self._status_basic:
+            value: int = 0
+            try:
+                value = int(self.status[key]["basic"].value)
+            except ValueError:
+                pass
+
+            data_dict["status"][key] = value
+
+        for key in self._status_special:
+            if key in self.status and len(self.status[key]) > 0:
+                value: int = 0
+                try:
+                    value = int(self.status[key]["basic"].value)
+                except ValueError:
+                    pass
+
+                if value > 0:
+                    data_dict["status"][key] = value
+
+        job_class = self.status["job_class"].value
+        if job_class is not None and job_class != "":
+            job_class_ids = [key for key, value in self.data_job_classes.items() if value["class"] == job_class]
+            if len(job_class_ids) > 0:
+                data_dict["status"]["job_class_id"] = int(job_class_ids[0])
         # dict => json
         data_json = json.dumps(data_dict, indent=4)
         self.export_json.value = data_json
@@ -155,7 +195,7 @@ class Simulator:
         data_base64 = binascii.b2a_base64(data_compressed).decode("utf-8")
 
         export_url = document.getElementById("export_url")
-        url = self._prefix_url + "?" + data_base64
+        url = self._prefix_url + self._suffix_url + "?" + data_base64
         export_url.href = url
 
     def calculation(self, event = None) -> None:
@@ -179,7 +219,7 @@ class Simulator:
 def main():
     query_strings = URLSearchParams.new(location.search)
 
-    instance = Simulator("https://rodb.aws.0nyx.net/simulator/v1.html")
+    instance = Simulator("https://rodb.aws.0nyx.net/simulator/", "v1.html")
 
     result_import: bool = None
     if str(query_strings) != "":

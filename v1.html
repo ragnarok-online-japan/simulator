@@ -101,142 +101,213 @@
         <selection class="inner-page">
 
             <div class="container border">
-                <div class="row bg-primary text-white">
-                    <h2>基本ステータス</h2>
-                </div>
-                <div class="row">
-                    <div class="col-md-2">
-                        <label for="status_lv_base" class="form-label">Lv</label>
-                    </div>
-                    <div class="col-md-2">
-                        <input id="status_lv_base" type="number" class="form-number" min="1" max="99" value="1">
-                    </div>
-                    <div class="col-md-2">
-                        <label for="status_lv_job" class="form-label">Job Lv</label>
-                    </div>
-                    <div class="col-md-2">
-                        <input id="status_lv_job" type="number" class="form-number" min="1" max="9" value="1">
-                    </div>
-                    <div class="col-md-2">
-                        <label for="status_job_class" class="form-label">職業</label>
-                    </div>
-                    <div class="col-md-2">
-                        <select id="status_job_class" class="form-select" aria-label="職業を選択">
+                <div class="accordion" id="accordion_status">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_status_basic" aria-expanded="true" aria-controls="collapse_status_basic">
+                            基本ステータス
+                        </button>
+                        </h2>
 
-                        </select>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-1">
-                        <label for="status_str_basic" class="form-label">Str</label>
-                    </div>
-                    <div class="col-md-3">
-                        <input id="status_str_basic" type="number" class="form-number" min="1" max="99" value="1">
-                        + <input id="status_str_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
-                    </div>
-                    <div class="col-md-1">
-                        <label for="status_agi_basic" class="form-label">Agi</label>
-                    </div>
-                    <div class="col-md-3">
-                        <input id="status_agi_basic" type="number" class="form-number" min="1" max="99" value="1">
-                        + <input id="status_agi_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
-                    </div>
-                    <div class="col-md-1">
-                        <label for="status_vit_basic" class="form-label">Vit</label>
-                    </div>
-                    <div class="col-md-3">
-                        <input id="status_vit_basic" type="number" class="form-number" min="1" max="99" value="1">
-                        + <input id="status_vit_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-1">
-                        <label for="status_int_basic" class="form-label">Int</label>
-                    </div>
-                    <div class="col-md-3">
-                        <input id="status_int_basic" type="number" class="form-number" min="1" max="99" value="1">
-                        + <input id="status_int_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
-                    </div>
-                    <div class="col-md-1">
-                        <label for="status_dex_basic" class="form-label">Dex</label>
-                    </div>
-                    <div class="col-md-3">
-                        <input id="status_dex_basic" type="number" class="form-number" min="1" max="99" value="1">
-                        + <input id="status_dex_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
-                    </div>
-                    <div class="col-md-1">
-                        <label for="status_luk_basic" class="form-label">Luk</label>
-                    </div>
-                    <div class="col-md-3">
-                        <input id="status_luk_basic" type="number" class="form-number" min="1" max="99" value="1">
-                        + <input id="status_luk_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
-                    </div>
-                </div>
-            </div>
+                        <div id="collapse_status_basic" class="accordion-collapse collapse show">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <label for="status_base_lv" class="form-label">Lv</label>
+                                </div>
+                                <div class="col-md-2">
+                                    <input id="status_base_lv" type="number" class="form-number" min="1" max="99" value="1">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="status_job_lv" class="form-label">Job Lv</label>
+                                </div>
+                                <div class="col-md-2">
+                                    <input id="status_job_lv" type="number" class="form-number" min="1" max="9" value="1">
+                                </div>
+                                <div class="col-md-1">
+                                    <label for="status_job_class" class="form-label">職業</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <input id="status_job_class" list="datalist_job_classes" placeholoder="Type to search..." value="* Not selected *">
+                                    <datalist id="datalist_job_classes"></datalist>
+                                </div>
+                            </div>
 
-            <div class="container">
-                <hr />
-            </div>
+                            <div class="row">
+                                <div class="col-md-1">
+                                    <label for="status_str_basic" class="form-label">Str</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <input id="status_str_basic" type="number" class="form-number" min="1" max="99" value="1">
+                                    + <input id="status_str_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
+                                </div>
+                                <div class="col-md-1">
+                                    <label for="status_agi_basic" class="form-label">Agi</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <input id="status_agi_basic" type="number" class="form-number" min="1" max="99" value="1">
+                                    + <input id="status_agi_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
+                                </div>
+                                <div class="col-md-1">
+                                    <label for="status_vit_basic" class="form-label">Vit</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <input id="status_vit_basic" type="number" class="form-number" min="1" max="99" value="1">
+                                    + <input id="status_vit_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-1">
+                                    <label for="status_int_basic" class="form-label">Int</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <input id="status_int_basic" type="number" class="form-number" min="1" max="99" value="1">
+                                    + <input id="status_int_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
+                                </div>
+                                <div class="col-md-1">
+                                    <label for="status_dex_basic" class="form-label">Dex</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <input id="status_dex_basic" type="number" class="form-number" min="1" max="99" value="1">
+                                    + <input id="status_dex_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
+                                </div>
+                                <div class="col-md-1">
+                                    <label for="status_luk_basic" class="form-label">Luk</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <input id="status_luk_basic" type="number" class="form-number" min="1" max="99" value="1">
+                                    + <input id="status_luk_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-            <div class="container border">
-                <div class="row">
-                    <div class="col-md-1 boarder">
-                        Max HP<br>
-                        <input id="status_hp_max" type="number" class="form-number" min="0" max="999999" value="1" disabled readonly>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_status_special" aria-expanded="false" aria-controls="collapse_status_special">
+                            特性ステータス
+                        </button>
+                        </h2>
+
+                        <div id="collapse_status_special" class="accordion-collapse collapse">
+                            <div class="row">
+                                <div class="col-md-1">
+                                    <label for="status_pow_basic" class="form-label">Pow</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <input id="status_pow_basic" type="number" class="form-number" min="0" max="99" value="0">
+                                    + <input id="status_pow_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
+                                </div>
+                                <div class="col-md-1">
+                                    <label for="status_sta_basic" class="form-label">Sta</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <input id="status_sta_basic" type="number" class="form-number" min="0" max="99" value="0">
+                                    + <input id="status_sta_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
+                                </div>
+                                <div class="col-md-1">
+                                    <label for="status_wis_basic" class="form-label">Wis</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <input id="status_wis_basic" type="number" class="form-number" min="0" max="99" value="0">
+                                    + <input id="status_wis_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-1">
+                                    <label for="status_spl_basic" class="form-label">Spl</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <input id="status_spl_basic" type="number" class="form-number" min="0" max="99" value="0">
+                                    + <input id="status_spl_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
+                                </div>
+                                <div class="col-md-1">
+                                    <label for="status_con_basic" class="form-label">Con</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <input id="status_con_basic" type="number" class="form-number" min="0" max="99" value="0">
+                                    + <input id="status_con_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
+                                </div>
+                                <div class="col-md-1">
+                                    <label for="status_crt_basic" class="form-label">Crt</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <input id="status_crt_basic" type="number" class="form-number" min="0" max="99" value="0">
+                                    + <input id="status_crt_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-1 boarder">
-                        Max SP<br>
-                        <input id="status_sp_max" type="number" class="form-number" min="0" max="999999" value="1" disabled readonly>
-                    </div>
-                    <div class="col-md-2 boarder">
-                        ATK<br>
-                        <input id="status_atk_basic" type="number" class="form-number" min="0" max="999" value="1" disabled readonly>
-                        +<input id="status_atk_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
-                    </div>
-                    <div class="col-md-2 boarder">
-                        DEF<br>
-                        <input id="status_def_basic" type="number" class="form-number" min="0" max="999" value="1" disabled readonly>
-                        +<input id="status_def_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
-                    </div>
-                    <div class="col-md-2 boarder">
-                        MDEF<br>
-                        <input id="status_mdef_basic" type="number" class="form-number" min="0" max="999" value="1" disabled readonly>
-                        +<input id="status_mdef_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
-                    </div>
-                    <div class="col-md-1 boarder">
-                        Hit<br>
-                        <input id="status_hit" type="number" class="form-number" min="0" max="99999" value="1" disabled readonly>
-                    </div>
-                    <div class="col-md-1 boarder">
-                        Flee<br>
-                        <input id="status_flee" type="number" class="form-number" min="0" max="99999" value="1" disabled readonly>
-                    </div>
-                    <div class="col-md-1 boarder">
-                        完全回避<br>
-                        <input id="status_complete_avoidance" type="number" class="form-number" min="0" max="999" value="1" disabled readonly>
-                    </div>
-                    <div class="col-md-1 boarder">
-                        Critical<br>
-                        <input id="status_critical" type="number" class="form-number" min="0" max="999" value="1" disabled readonly>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-2 boarder">
-                        MATK<br>
-                        <input id="status_matk_basic" type="number" class="form-number" min="0" max="999" value="1" disabled readonly>
-                        +<input id="status_matk_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
-                    </div>
-                    <div class="col-md-1 boarder">
-                        ASPD<br>
-                        <input id="status_aspd" type="number" class="form-number" min="0" max="999" value="1.0" disabled readonly>
-                    </div>
-                    <div class="col-md-1 boarder">
-                        HP回復量<br>
-                        <input id="status_hp_recovery" type="number" class="form-number" min="0" max="999" value="1" disabled readonly>
-                    </div>
-                    <div class="col-md-1 boarder">
-                        SP回復量<br>
-                        <input id="status_sp_recovery" type="number" class="form-number" min="0" max="999" value="1" disabled readonly>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_status" aria-expanded="true" aria-controls="collapse_status">
+                            ステータス表示
+                        </button>
+                        </h2>
+
+                        <div id="collapse_status" class="accordion-collapse collapse show">
+
+                            <div class="row">
+                                <div class="col-md-1 boarder">
+                                    Max HP<br>
+                                    <input id="status_hp_max" type="number" class="form-number" min="0" max="999999" value="1" disabled readonly>
+                                </div>
+                                <div class="col-md-1 boarder">
+                                    Max SP<br>
+                                    <input id="status_sp_max" type="number" class="form-number" min="0" max="999999" value="1" disabled readonly>
+                                </div>
+                                <div class="col-md-2 boarder">
+                                    ATK<br>
+                                    <input id="status_atk_basic" type="number" class="form-number" min="0" max="999" value="1" disabled readonly>
+                                    +<input id="status_atk_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
+                                </div>
+                                <div class="col-md-2 boarder">
+                                    DEF<br>
+                                    <input id="status_def_basic" type="number" class="form-number" min="0" max="999" value="1" disabled readonly>
+                                    +<input id="status_def_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
+                                </div>
+                                <div class="col-md-2 boarder">
+                                    MDEF<br>
+                                    <input id="status_mdef_basic" type="number" class="form-number" min="0" max="999" value="1" disabled readonly>
+                                    +<input id="status_mdef_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
+                                </div>
+                                <div class="col-md-1 boarder">
+                                    Hit<br>
+                                    <input id="status_hit" type="number" class="form-number" min="0" max="99999" value="1" disabled readonly>
+                                </div>
+                                <div class="col-md-1 boarder">
+                                    Flee<br>
+                                    <input id="status_flee" type="number" class="form-number" min="0" max="99999" value="1" disabled readonly>
+                                </div>
+                                <div class="col-md-1 boarder">
+                                    完全回避<br>
+                                    <input id="status_complete_avoidance" type="number" class="form-number" min="0" max="999" value="1" disabled readonly>
+                                </div>
+                                <div class="col-md-1 boarder">
+                                    Critical<br>
+                                    <input id="status_critical" type="number" class="form-number" min="0" max="999" value="1" disabled readonly>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2 boarder">
+                                    MATK<br>
+                                    <input id="status_matk_basic" type="number" class="form-number" min="0" max="999" value="1" disabled readonly>
+                                    +<input id="status_matk_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled readonly>
+                                </div>
+                                <div class="col-md-1 boarder">
+                                    ASPD<br>
+                                    <input id="status_aspd" type="number" class="form-number" min="0" max="999" value="1.0" disabled readonly>
+                                </div>
+                                <div class="col-md-1 boarder">
+                                    HP回復量<br>
+                                    <input id="status_hp_recovery" type="number" class="form-number" min="0" max="999" value="1" disabled readonly>
+                                </div>
+                                <div class="col-md-1 boarder">
+                                    SP回復量<br>
+                                    <input id="status_sp_recovery" type="number" class="form-number" min="0" max="999" value="1" disabled readonly>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
