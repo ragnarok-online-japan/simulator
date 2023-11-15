@@ -1,5 +1,14 @@
 {
     "packages": [
         "numpy"
-    ]
+    ],
+    "files": {
+        "/simulator/package/__init__.py": "./package/__init__.py",
+        "/simulator/package/str.py": "./package/str.py",
+        "/simulator/package/agi.py": "./package/agi.py",
+        "/simulator/package/vit.py": "./package/vit.py",
+        "/simulator/package/int.py": "./package/int.py",
+        "/simulator/package/dex.py": "./package/dex.py",
+        "/simulator/package/luk.py": "./package/luk.py"
+    }
 }

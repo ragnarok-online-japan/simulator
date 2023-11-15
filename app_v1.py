@@ -211,9 +211,13 @@ class Simulator:
 
         try:
             # calculation
-            package.str.calc_bonus(self.dom_elements)
+            package.str.calc(self.dom_elements)
+            package.agi.calc(self.dom_elements)
+            package.vit.calc(self.dom_elements)
+            package.int.calc(self.dom_elements)
+            package.dex.calc(self.dom_elements)
+            package.luk.calc(self.dom_elements)
 
-            pass
         except Exception as ex:
             success = False
             traceback.print_exception(ex)
@@ -246,10 +250,11 @@ def main():
     if result_import is not None:
         if result_import == True:
             instance.view_dialog("インポートが完了しました")
-            instance.calculation()
         else:
             instance.view_dialog("*** ERROR ***\nインポートが失敗しました")
+            return
 
+    instance.calculation()
     instance.export_to_base64()
 
 if __name__ == "__main__":
