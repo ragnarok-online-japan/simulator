@@ -1,6 +1,1 @@
-from . import str
-from . import agi
-from . import vit
-from . import int
-from . import dex
-from . import luk
+from . import module_v1

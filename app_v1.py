@@ -211,12 +211,7 @@ class Simulator:
 
         try:
             # calculation
-            package.str.calc(self.dom_elements)
-            package.agi.calc(self.dom_elements)
-            package.vit.calc(self.dom_elements)
-            package.int.calc(self.dom_elements)
-            package.dex.calc(self.dom_elements)
-            package.luk.calc(self.dom_elements)
+            package.module_v1.calc(self.dom_elements)
 
         except Exception as ex:
             success = False
