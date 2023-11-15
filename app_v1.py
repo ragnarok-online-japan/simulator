@@ -48,6 +48,15 @@ class Simulator:
             }
             self.dom_elements[key]["basic"].oninput = self.calculation
 
+        for key in ("atk", "def", "matk", "mdef"):
+            self.dom_elements[key]: dict = {
+                "basic"  : document.getElementById(f"status_{key}_basic"),
+                "bonus" : document.getElementById(f"status_{key}_bonus"),
+            }
+
+        for key in ("hp_max", "sp_max", "hit", "flee", "complete_avoidance", "critical", "aspd", "hp_recovery", "sp_recovery"):
+            self.dom_elements[key] = document.getElementById(f"status_{key}")
+
         self.dom_elements["button_import_json"] = document.getElementById("button_import_json")
         self.dom_elements["button_import_json"].onclick = self.onclick_import_from_json
 
