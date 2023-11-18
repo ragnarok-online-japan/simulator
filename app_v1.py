@@ -326,7 +326,7 @@ class Simulator:
 
         try:
             # calculation
-            package.module_v1.pre_calc(self.dom_elements, self.load_datas)
+            package.module_v1.pre_calc(self._prefix_url, self.dom_elements, self.load_datas)
 
         except Exception as ex:
             success = False
