@@ -25,7 +25,7 @@ class Simulator:
     dom_elements: dict[str] = {}
     load_datas: dict[str] = {}
 
-    _status_bases: dict = {
+    _status_primary: dict = {
         "str": {
             "status_window_position" : (36, 6)
         },
@@ -45,7 +45,7 @@ class Simulator:
             "status_window_position" : (36, 86)
         }
     }
-    _status_specials: dict = {
+    _status_talent: dict = {
         "pow": {
             "status_window_position" : (36, 128)
         },
@@ -120,7 +120,7 @@ class Simulator:
         self.dom_elements["job_class"].oninput = self.calculation
 
         # 基本ステータス
-        for key in self._status_bases.keys():
+        for key in self._status_primary.keys():
             self.dom_elements[key]: dict = {
                 "base"  : document.getElementById(f"status_{key}_base"),
                 "bonus" : document.getElementById(f"status_{key}_bonus"),
@@ -128,7 +128,7 @@ class Simulator:
             self.dom_elements[key]["base"].oninput = self.calculation
 
         # 特性ステータス
-        for key in self._status_specials.keys():
+        for key in self._status_talent.keys():
             self.dom_elements[key]: dict = {
                 "base"  : document.getElementById(f"status_{key}_base"),
                 "bonus" : document.getElementById(f"status_{key}_bonus"),
@@ -217,11 +217,11 @@ class Simulator:
             if "job_class" in data_dict["status"]:
                 self.dom_elements["job_class"].value = data_dict["status"]["job_class"]
 
-            for key in self._status_bases.keys():
+            for key in self._status_primary.keys():
                 if key in data_dict["status"]:
                     self.dom_elements[key]["base"].value = data_dict["status"][key]
 
-            for key in self._status_specials.keys():
+            for key in self._status_talent.keys():
                 if key in data_dict["status"] and len(self.dom_elements[key]) > 0:
                     self.dom_elements[key]["base"].value = data_dict["status"][key]
 
@@ -265,7 +265,7 @@ class Simulator:
             }
         }
 
-        for key in self._status_bases.keys():
+        for key in self._status_primary.keys():
             value: int = 0
             try:
                 value = int(self.dom_elements[key]["base"].value)
@@ -274,7 +274,7 @@ class Simulator:
 
             data_json["status"][key] = value
 
-        for key in self._status_specials:
+        for key in self._status_talent:
             if key in self.dom_elements and len(self.dom_elements[key]) > 0:
                 value: int = 0
                 try:
@@ -326,18 +326,18 @@ class Simulator:
         font = ImageFont.truetype("./assets/SourceCodePro-Regular.ttf", 10, 0)
         draw = ImageDraw.Draw(img)
 
-        for key in self._status_bases.keys():
+        for key in self._status_primary.keys():
             text = self.dom_elements[key]["base"].value
             text += "+"
             text += self.dom_elements[key]["bonus"].value
-            position = self._status_bases[key]["status_window_position"]
+            position = self._status_primary[key]["status_window_position"]
             draw.text(position, text, "#000000", font=font, align="left")
 
-        for key in self._status_specials.keys():
+        for key in self._status_talent.keys():
             text = self.dom_elements[key]["base"].value
             text += "+"
             text += self.dom_elements[key]["bonus"].value
-            position = self._status_specials[key]["status_window_position"]
+            position = self._status_talent[key]["status_window_position"]
             draw.text(position, text, "#000000", font=font, align="left")
 
         # zoom x2
