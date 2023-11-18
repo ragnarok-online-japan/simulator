@@ -67,6 +67,18 @@ class Simulator:
     }
 
     _status_result: dict = {
+        "atk": {
+            "status_window_position" : (0, 0)
+        },
+        "def": {
+            "status_window_position" : (0, 0)
+        },
+        "matk": {
+            "status_window_position" : (0, 0)
+        },
+        "mdef": {
+            "status_window_position" : (0, 0)
+        },
         "hp_max": {
             "status_window_position" : (0, 0)
         },
@@ -107,6 +119,7 @@ class Simulator:
         self.dom_elements["job_class"] = document.getElementById("status_job_class")
         self.dom_elements["job_class"].oninput = self.calculation
 
+        # 基本ステータス
         for key in self._status_bases.keys():
             self.dom_elements[key]: dict = {
                 "base"  : document.getElementById(f"status_{key}_base"),
@@ -122,14 +135,15 @@ class Simulator:
             }
             self.dom_elements[key]["base"].oninput = self.calculation
 
-        for key in ("atk", "def", "matk", "mdef"):
-            self.dom_elements[key]: dict = {
-                "base"  : document.getElementById(f"status_{key}_base"),
-                "bonus" : document.getElementById(f"status_{key}_bonus"),
-            }
-
+        # ステータス
         for key in self._status_result.keys():
-            self.dom_elements[key] = document.getElementById(f"status_{key}")
+            if key in  ("atk", "def", "matk", "mdef"):
+                self.dom_elements[key]: dict = {
+                    "base"  : document.getElementById(f"status_{key}_base"),
+                    "bonus" : document.getElementById(f"status_{key}_bonus"),
+                }
+            else:
+                self.dom_elements[key] = document.getElementById(f"status_{key}")
 
         self.dom_elements["button_import_json"] = document.getElementById("button_import_json")
         self.dom_elements["button_import_json"].onclick = self.onclick_import_from_json
