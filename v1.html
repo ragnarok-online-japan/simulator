@@ -265,12 +265,12 @@
 
                     <div class="accordion-item">
                         <h2 class="accordion-header">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_status" aria-expanded="true" aria-controls="collapse_status">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_status" aria-expanded="false" aria-controls="collapse_status">
                             ステータス表示
                         </button>
                         </h2>
 
-                        <div id="collapse_status" class="accordion-collapse collapse show">
+                        <div id="collapse_status" class="accordion-collapse collapse">
 
                             <div class="row">
                                 <div class="col-md-1">
@@ -337,12 +337,12 @@
 
                     <div class="accordion-item">
                         <h2 class="accordion-header">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_status_window" aria-expanded="false" aria-controls="collapse_status_window">
-                            ステータスウィンドウ
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_status_window_image" aria-expanded="true" aria-controls="collapse_status_window_image">
+                            ステータスウィンドウ画像
                         </button>
                         </h2>
 
-                        <div id="collapse_status_window" class="accordion-collapse collapse">
+                        <div id="collapse_status_window_image" class="accordion-collapse collapse show">
                             <div>
                                 <button id="button_draw_status_window" type="button" class="btn btn-primary">ステータスウィンドウ画像を更新</button><br>
                                 <img id="img_status_window" width="1" height="1" download="ro_status.png"/>
@@ -350,23 +350,29 @@
                         </div>
                     </div>
 
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_export_data" aria-expanded="false" aria-controls="collapse_export_data">
+                            エクスポートデータ
+                        </button>
+                        </h2>
+
+                        <div id="collapse_export_data" class="accordion-collapse collapse">
+                            <div class="row">
+                                <div class="mb-3">
+                                    <label for="export_json" class="form-label">JSON Data</label>
+                                    <textarea class="form-control font-futur" id="textarea_import_json" rows="10"></textarea>
+                                    <button id="button_import_json" type="button" class="btn btn-primary">JSONからインポート</button>
+                                </div>
+                                <div class="mb-3 text-wrap">
+                                    <a id="export_url" class="btn btn-success" href="#" target="_blank">Export URL</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="container">
-                <hr />
-            </div>
-
-            <div class="container border">
-                <div class="mb-3">
-                    <label for="export_json" class="form-label">JSON Data</label>
-                    <textarea class="form-control font-futur" id="textarea_import_json" rows="10"></textarea>
-                    <button id="button_import_json" type="button" class="btn btn-primary">JSONからインポート</button>
-                </div>
-                <div class="mb-3 text-wrap">
-                    <a id="export_url" class="btn btn-success" href="#" target="_blank">Export URL</a>
-                </div>
-            </div>
         </selection>
     </main><!-- End #main -->
 
