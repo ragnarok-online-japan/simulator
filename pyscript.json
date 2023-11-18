@@ -1,8 +1,13 @@
 {
     "packages": [
-        "numpy"
+        "numpy",
+        "requests",
+        "pyodide-http",
+        "Pillow"
     ],
     "files": {
+        "/simulator/assets/statwin_bg.bmp": "./assets/statwin_bg.bmp",
+        "/simulator/assets/SourceCodePro-Regular.ttf": "./assets/SourceCodePro-Regular.ttf",
         "/simulator/package/__init__.py": "./package/__init__.py",
         "/simulator/package/module_v1.py": "./package/module_v1.py"
     }
