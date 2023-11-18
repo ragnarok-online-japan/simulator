@@ -158,6 +158,7 @@ class Simulator:
         self.dom_elements["button_draw_status_window"] = document.getElementById("button_draw_status_window")
         self.dom_elements["button_draw_status_window"].onclick = self.onclick_draw_status_window
 
+        # 職業情報
         response = requests.get(prefix_url + "data/job_classes.json")
         self.load_datas["job_classes"] = response.json()
 
@@ -174,36 +175,6 @@ class Simulator:
                 datalist_job_classes.appendChild(child_class)
 
             self.dom_elements["job_class"].value = "novice"
-
-
-        response = requests.get(prefix_url + "data/weapon_types.json")
-        self.load_datas["weapon_types"] = response.json()
-
-        if len(self.load_datas["weapon_types"]) > 0:
-            # Right : Main weapon type
-            self.dom_elements["select_weapon_type_right"] = document.getElementById("select_weapon_type_right")
-            for idx in self.load_datas["weapon_types"]:
-                child_class = document.createElement("option")
-                data = self.load_datas["weapon_types"][idx]
-
-                child_class.value = data["name"]
-                if "display_name" in data:
-                    child_class.label = data["display_name"]
-
-                self.dom_elements["select_weapon_type_right"].appendChild(child_class)
-
-            # Left : Sub weapon type
-            self.dom_elements["select_weapon_type_left"]  = document.getElementById("select_weapon_type_left")
-            for idx in self.load_datas["weapon_types"]:
-                child_class = document.createElement("option")
-                data = self.load_datas["weapon_types"][idx]
-
-                if "allow_left" in data:
-                    child_class.value = data["name"]
-                    if "display_name" in data:
-                        child_class.label = data["display_name"]
-                    self.dom_elements["select_weapon_type_left"].appendChild(child_class)
-
 
         # initilzed finish
         self._initialized = True
