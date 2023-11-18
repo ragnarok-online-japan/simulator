@@ -1,0 +1,23 @@
+{
+    "right": {
+        "hand": {
+            "display_name": "素手"
+        },
+        "short sword": {
+            "display_name": "短剣"
+        },
+        "one-handed sword": {
+            "display_name": "片手剣"
+        },
+        "one-handed axe": {
+            "display_name": "片手斧"
+        },
+        "blunt": {
+            "display_name": "鈍器"
+        },
+        "staff": {
+            "display_name": "杖"
+        }
+    },
+    "left": {}
+}
