@@ -214,8 +214,8 @@ class Simulator:
             if "job_lv" in data_dict["status"]:
                 self.dom_elements["job_lv"].value = data_dict["status"]["job_lv"]
 
-            if "job_class_id" in data_dict["status"]:
-                self.dom_elements["job_class"].value = self.load_datas["job_classes"][str(data_dict["status"]["job_class_id"])]["class"]
+            if "job_class" in data_dict["status"]:
+                self.dom_elements["job_class"].value = data_dict["status"]["job_class"]
 
             for key in self._status_bases.keys():
                 if key in data_dict["status"]:
@@ -249,7 +249,7 @@ class Simulator:
             "status" : {
                 "base_lv" : int(self.dom_elements["base_lv"].value),
                 "job_lv" : int(self.dom_elements["job_lv"].value),
-                "job_class_id": 0
+                "job_class": self.dom_elements["job_class"].value
             },
             "skills": {
 
@@ -284,12 +284,6 @@ class Simulator:
 
                 if value > 0:
                     data_json["status"][key] = value
-
-        job_class = self.dom_elements["job_class"].value
-        if job_class is not None and job_class != "":
-            job_class_ids = [key for key, value in self.load_datas["job_classes"].items() if value["class"] == job_class]
-            if len(job_class_ids) > 0:
-                data_json["status"]["job_class_id"] = int(job_class_ids[0])
 
         # dict => json
         data_json = json.dumps(data_json, indent=4)
