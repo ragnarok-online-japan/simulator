@@ -145,6 +145,10 @@ class Simulator:
             else:
                 self.dom_elements[key] = document.getElementById(f"status_{key}")
 
+        # 武器タイプ
+        self.dom_elements["select_weapon_type_right"] = document.getElementById("select_weapon_type_right")
+        self.dom_elements["select_weapon_type_left"]  = document.getElementById("select_weapon_type_left")
+
         self.dom_elements["button_import_json"] = document.getElementById("button_import_json")
         self.dom_elements["button_import_json"].onclick = self.onclick_import_from_json
 
