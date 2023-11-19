@@ -7,7 +7,7 @@
     ],
     "files": {
         "/simulator/assets/statwin_bg.png": "./assets/statwin_bg.png",
-        "/simulator/assets/SourceHanCodeJP.ttc": "./assets/SourceHanCodeJP.ttc",
+        "/simulator/assets/SourceHanCodeJP-Medium.otf": "./assets/SourceHanCodeJP-Medium.otf",
         "/simulator/assets/Melete-Regular.otf": "./assets/Melete-Regular.otf",
         "/simulator/package/__init__.py": "./package/__init__.py",
         "/simulator/package/module_v1.py": "./package/module_v1.py"

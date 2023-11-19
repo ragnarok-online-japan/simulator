@@ -326,8 +326,8 @@ class Simulator:
 
     def draw_img_status_window(self, img_src: str = "./assets/statwin_bg.png"):
         img = Image.open(img_src)
-        font_lg = ImageFont.truetype("./assets/SourceHanCodeJP.ttc", size=10, index=2)
-        font_md = ImageFont.truetype("./assets/SourceHanCodeJP.ttc", size=9, index=2)
+        font_lg = ImageFont.truetype("./assets/SourceHanCodeJP-Medium.otf", size=10)
+        font_md = ImageFont.truetype("./assets/SourceHanCodeJP-Medium.otf", size=9)
         font_logo = ImageFont.truetype("./assets/Melete-Regular.otf", size=11)
         draw = ImageDraw.Draw(img)
 
