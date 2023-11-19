@@ -250,7 +250,7 @@ class Simulator:
 
         return success
 
-    def export_to_base64(self) -> None:
+    def export_to_json(self) -> str:
         data_json: dict[str] = {
             "version" : self._export_json_format_version,
             "status" : {
@@ -297,7 +297,13 @@ class Simulator:
 
         # dict => json
         data_json = json.dumps(data_json, indent=4)
+
         self.dom_elements["textarea_import_json"].value = data_json
+
+        return data_json
+
+    def export_to_base64(self) -> None:
+        data_json: str = self.export_to_json()
 
         # json => bz2 copressed
         data_compressed = bz2.compress(data_json.encode("utf-8"), compresslevel=9)
