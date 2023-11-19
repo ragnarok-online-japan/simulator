@@ -210,7 +210,7 @@ class Simulator:
 
         # 特性ステータス
         for key in self._status_talent.keys():
-            self.dom_elements[key]["base"].value = 1
+            self.dom_elements[key]["base"].value = 0
 
     def onclick_import_from_json(self, event = None) -> None:
         try:
