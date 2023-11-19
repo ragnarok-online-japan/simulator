@@ -257,7 +257,10 @@ class Simulator:
 
     def onclick_import_from_json(self, event = None) -> None:
         try:
+            self.reset_data()
             self.import_from_json(self.dom_elements["textarea_import_json"].value)
+            self.calculation()
+            self.draw_img_status_window()
             self.view_dialog("JSONからインポートしました")
         except Exception as ex:
             traceback.print_exception(ex)
