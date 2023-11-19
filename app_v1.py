@@ -160,8 +160,8 @@ class Simulator:
         # 職業情報
         headers={
             "Content-Type": "application/json",
-            "Accept-Encoding": "gzip, deflate, br",
-            "Connection": "close"
+            "Accept-Encoding": None, # delete unsafe header
+            "Connection": None # delete unsafe haader
         }
         response = requests.get(prefix_url + "data/job_classes.json", headers=headers)
         self.load_datas["job_classes"] = response.json()
@@ -230,6 +230,10 @@ class Simulator:
 
         if "equipments" in data_dict:
             pass
+
+        if "additional_info" in data_dict:
+            if "character_name" in data_dict["additional_info"]:
+                self.dom_elements["input_character_name"].value = data_dict["additional_info"]["character_name"]
 
     def import_from_base64(self, data_base64: str) -> bool:
         success: bool = False
@@ -322,6 +326,7 @@ class Simulator:
             self.export_to_base64()
 
     def onclick_draw_status_window(self, event = None):
+        self.calculation()
         self.draw_img_status_window()
 
     def draw_img_status_window(self, img_src: str = "./assets/statwin_bg.png"):
