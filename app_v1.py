@@ -27,83 +27,76 @@ class Simulator:
 
     _status_primary: dict = {
         "str": {
-            "status_window_position" : (36, 6)
+            "status_window_position" : (256, 22)
         },
         "agi": {
-            "status_window_position" : (36, 22)
+            "status_window_position" : (256, 38)
         },
         "vit": {
-            "status_window_position" : (36, 38)
+            "status_window_position" : (256, 54)
         },
         "int": {
-            "status_window_position" : (36, 54)
+            "status_window_position" : (256, 70)
         },
         "dex": {
-            "status_window_position" : (36, 70)
+            "status_window_position" : (256, 86)
         },
         "luk": {
-            "status_window_position" : (36, 86)
+            "status_window_position" : (256, 102)
         }
     }
     _status_talent: dict = {
         "pow": {
-            "status_window_position" : (36, 128)
+            "status_window_position" : (256, 142)
         },
         "sta": {
-            "status_window_position" : (36, 144)
+            "status_window_position" : (256, 158)
         },
         "wis": {
-            "status_window_position" : (36, 160)
+            "status_window_position" : (256, 174)
         },
         "spl": {
-            "status_window_position" : (36, 176)
+            "status_window_position" : (256, 190)
         },
         "con": {
-            "status_window_position" : (36, 192)
+            "status_window_position" : (256, 206)
         },
         "crt": {
-            "status_window_position" : (36, 208)
+            "status_window_position" : (256, 222)
         }
     }
 
     _status_result: dict = {
         "atk": {
-            "status_window_position" : (0, 0)
+            "status_window_position" : (408, 26)
         },
         "def": {
-            "status_window_position" : (0, 0)
+            "status_window_position" : (494, 26)
         },
         "matk": {
-            "status_window_position" : (0, 0)
+            "status_window_position" : (408, 42)
         },
         "mdef": {
-            "status_window_position" : (0, 0)
+            "status_window_position" : (494, 42)
         },
-        "hp_max": {
-            "status_window_position" : (0, 0)
-        },
-        "hp_recovery": {
-        },
-        "sp_max": {
-            "status_window_position" : (0, 0)
-        },
-        "sp_recovery": {
-        },
+        "hp_max": {},
+        "hp_recovery": {},
+        "sp_max": {},
+        "sp_recovery": {},
         "hit": {
-            "status_window_position" : (0, 0)
+            "status_window_position" : (408, 58)
         },
         "flee": {
-            "status_window_position" : (0, 0)
+            "status_window_position" : (494, 58)
         },
-        "complete_avoidance": {
-            "status_window_position" : (0, 0)
-        },
+        "complete_avoidance": {},
         "critical": {
-            "status_window_position" : (0, 0)
+            "status_window_position" : (408, 74)
         },
         "aspd": {
-            "status_window_position" : (0, 0)
-        }
+            "status_window_position" : (494, 74)
+        },
+        "weight_max":{}
     }
 
     def __init__(self, prefix_url = "/", suffix_url="index.html") -> None:
@@ -149,6 +142,8 @@ class Simulator:
         self.dom_elements["select_weapon_type_right"] = document.getElementById("select_weapon_type_right")
         self.dom_elements["select_weapon_type_left"]  = document.getElementById("select_weapon_type_left")
 
+        self.dom_elements["input_character_name"] = document.getElementById("input_character_name")
+
         self.dom_elements["button_import_json"] = document.getElementById("button_import_json")
         self.dom_elements["button_import_json"].onclick = self.onclick_import_from_json
 
@@ -163,7 +158,12 @@ class Simulator:
         self.dom_elements["button_draw_status_window"].onclick = self.onclick_draw_status_window
 
         # 職業情報
-        response = requests.get(prefix_url + "data/job_classes.json")
+        headers={
+            "Content-Type": "application/json",
+            "Accept-Encoding": "gzip, deflate, br",
+            "Connection": "close"
+        }
+        response = requests.get(prefix_url + "data/job_classes.json", headers=headers)
         self.load_datas["job_classes"] = response.json()
 
         if len(self.load_datas["job_classes"]) > 0:
@@ -262,6 +262,9 @@ class Simulator:
             },
             "supports": {
 
+            },
+            "additional_info": {
+                "character_name": self.dom_elements["input_character_name"].value
             }
         }
 
@@ -321,31 +324,77 @@ class Simulator:
     def onclick_draw_status_window(self, event = None):
         self.draw_img_status_window()
 
-    def draw_img_status_window(self, img_src: str = "./assets/statwin_bg.bmp"):
+    def draw_img_status_window(self, img_src: str = "./assets/statwin_bg.png"):
         img = Image.open(img_src)
-        font = ImageFont.truetype("./assets/SourceCodePro-Regular.ttf", 10, 0)
+        font_lg = ImageFont.truetype("./assets/SourceHanCodeJP.ttc", size=10, index=2)
+        font_md = ImageFont.truetype("./assets/SourceHanCodeJP.ttc", size=9, index=2)
+        font_logo = ImageFont.truetype("./assets/Melete-Regular.otf", size=11)
         draw = ImageDraw.Draw(img)
+
+        draw.text((0,220), "Powerd by RODB", "#16507b", font=font_logo, align="left")
+
+        draw.text((20,1), "基本情報", "#000000", font=font_lg, align="left")
+        draw.text((236,1), "ステータス", "#000000", font=font_lg, align="left")
+        draw.text((236,122), "特性ステータス", "#000000", font=font_lg, align="left")
+
+        character_name: str = self.dom_elements["input_character_name"].value
+        draw.text((10,20), character_name, "#000000", font=font_lg, align="left")
+        draw.text((10,36), str(self.dom_elements["job_class"].value).capitalize(), "#000000", font=font_md, align="left")
+
+        draw.text((16,50), "HP", "#000000", font=font_md, align="left")
+        hp_max = self.dom_elements["hp_max"].value
+        draw.text((100,58), f"{hp_max} / {hp_max}", "#000000", font=font_md, align="center", anchor="mm")
+
+        draw.text((16,66), "SP", "#000000", font=font_md, align="left")
+        sp_max = self.dom_elements["sp_max"].value
+        draw.text((100,72), f"{sp_max} / {sp_max}", "#000000", font=font_md, align="center", anchor="mm")
+
+        draw.text((16,100), "Base Lv. " + self.dom_elements["base_lv"].value, "#000000", font=font_md, align="left")
+        draw.text((16,112), "Job Lv. " + self.dom_elements["job_lv"].value, "#000000", font=font_md, align="left")
+
+        weight_max: str = self.dom_elements["weight_max"].value
+        zeny: int = 999999999
+        draw.text((216,136), f"Weight:0/{weight_max} Zeny:{zeny:,d}", "#000000", font=font_md, align="right", anchor="rt")
 
         for key in self._status_primary.keys():
             text = self.dom_elements[key]["base"].value
             text += "+"
             text += self.dom_elements[key]["bonus"].value
             position = self._status_primary[key]["status_window_position"]
-            draw.text(position, text, "#000000", font=font, align="left")
+            draw.text(position, text, "#000000", font=font_md, align="left")
 
         for key in self._status_talent.keys():
             text = self.dom_elements[key]["base"].value
             text += "+"
             text += self.dom_elements[key]["bonus"].value
             position = self._status_talent[key]["status_window_position"]
-            draw.text(position, text, "#000000", font=font, align="left")
+            draw.text(position, text, "#000000", font=font_md, align="left")
+
+        for key in self._status_result.keys():
+            if "status_window_position" in self._status_result[key]:
+                text: str = ""
+                if key in  ("atk", "def", "matk", "mdef"):
+                    text = self.dom_elements[key]["base"].value
+                    text += " + "
+                    text += self.dom_elements[key]["bonus"].value
+                elif key == "flee":
+                    text = self.dom_elements[key].value
+                    text += " + "
+                    text += "{:.0f}".format(float(self.dom_elements["complete_avoidance"].value))
+                elif key in ("critical", "aspd"):
+                    text = "{:.0f}".format(float(self.dom_elements[key].value))
+                else:
+                    text = self.dom_elements[key].value
+
+                position = self._status_result[key]["status_window_position"]
+                draw.text(position, text, "#000000", font=font_md, align="right", anchor="rt")
 
         # zoom x2
-        img = img.resize((img.width * 2, img.height * 2), Image.NEAREST)
+        img = img.resize((img.width * 2, img.height * 2))
 
         buffer = BytesIO()
         img.save(buffer, "png")
-        img_str = "data:image/bmp;base64," + base64.b64encode(buffer.getvalue()).decode("ascii")
+        img_str = "data:image/png;base64," + base64.b64encode(buffer.getvalue()).decode("ascii")
         img_status_window = self.dom_elements["img_status_window"]
         img_status_window.src = img_str
         img_status_window.width = img.width

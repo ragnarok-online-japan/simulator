@@ -265,12 +265,12 @@
 
                     <div class="accordion-item">
                         <h2 class="accordion-header">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_status" aria-expanded="false" aria-controls="collapse_status">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_status" aria-expanded="true" aria-controls="collapse_status">
                             ステータス表示
                         </button>
                         </h2>
 
-                        <div id="collapse_status" class="accordion-collapse collapse">
+                        <div id="collapse_status" class="accordion-collapse show">
 
                             <div class="row">
                                 <div class="col-md-1">
@@ -298,11 +298,11 @@
                                 </div>
                                 <div class="col-md-1">
                                     Hit<br>
-                                    <input id="status_hit" type="number" class="form-number" min="0" max="99999" value="1" disabled>
+                                    <input id="status_hit" type="number" class="form-number" min="0" max="9999" value="1" disabled>
                                 </div>
                                 <div class="col-md-1">
                                     Flee<br>
-                                    <input id="status_flee" type="number" class="form-number" min="0" max="99999" value="1" disabled>
+                                    <input id="status_flee" type="number" class="form-number" min="0" max="9999" value="1" disabled>
                                 </div>
                                 <div class="col-md-1">
                                     完全回避<br>
@@ -331,6 +331,12 @@
                                     SP回復量<br>
                                     <input id="status_sp_recovery" type="number" class="form-number" min="0" max="999" value="1" disabled>
                                 </div>
+                                <div class="col-md-1">
+                                </div>
+                                <div class="col-md-2">
+                                    最大所持量<br>
+                                    <input id="status_weight_max" type="number" class="form-number" min="0" max="9999" value="1" disabled>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -344,6 +350,8 @@
 
                         <div id="collapse_status_window_image" class="accordion-collapse collapse show">
                             <div>
+                                <label for="input_character_name" class="form-label">キャラクターネーム:</label>
+                                <input id="input_character_name" type="text" class="form-text" value="フェニックス1号">
                                 <button id="button_draw_status_window" type="button" class="btn btn-primary">ステータスウィンドウ画像を更新</button><br>
                                 <img id="img_status_window" width="1" height="1" download="ro_status.png"/>
                             </div>
