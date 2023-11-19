@@ -1,7 +1,9 @@
 # app.py
+from datetime import datetime
+import re
 from PIL import Image, ImageFont, ImageDraw
 from io import BytesIO
-from js import location,URLSearchParams,localStorage
+from js import location,URLSearchParams,localStorage,window
 from pyscript import document
 import base64
 import binascii
@@ -186,6 +188,45 @@ class Simulator:
 
             self.dom_elements["job_class"].value = "novice"
 
+        div_save_load = document.getElementById("div_save_load")
+        alert_unavailable_save_load = document.getElementById("alert_unavailable_save_load")
+        if window.localStorage:
+            # localStorage 対応Browser
+            alert_unavailable_save_load.hidden = True
+            div_save_load.hidden = False
+
+            self.dom_elements["select_slot_savelist"] = document.getElementById("select_slot_savelist")
+            self.dom_elements["select_slot_savelist"].onchange = self.onclick_slot_select
+            slot_size: int = localStorage.length
+            if slot_size > 0:
+                pattern = re.compile(r"^simulator\.json\.(.+)$")
+                for idx in range(slot_size):
+                    key: str = localStorage.key(idx)
+                    matches = pattern.match(key)
+                    if matches == None:
+                        continue
+                    print("[TRACE]", "localStorage, key:", key)
+
+                    slot_name: str = matches.group(1)
+                    child_class = document.createElement("option")
+                    child_class.value = key
+                    child_class.label = slot_name
+
+                    self.dom_elements["select_slot_savelist"].appendChild(child_class)
+
+            self.dom_elements["button_slot_save"] = document.getElementById("button_slot_save")
+            self.dom_elements["button_slot_save"].onclick = self.onclick_slot_save
+
+            self.dom_elements["button_slot_load"] = document.getElementById("button_slot_load")
+            self.dom_elements["button_slot_load"].onclick = self.onclick_slot_load
+
+            self.dom_elements["button_slot_delete"] = document.getElementById("button_slot_delete")
+            self.dom_elements["button_slot_delete"].onclick = self.onclick_slot_delete
+        else:
+            # localStorage 未対応Browser
+            alert_unavailable_save_load.hidden = False
+            div_save_load.hidden = True
+
         # initilzed finish
         self._initialized = True
 
@@ -202,7 +243,9 @@ class Simulator:
 
         self.dom_elements["job_class"].value = "novice"
 
-        self.dom_elements["input_character_name"].value = "フェニックス1号"
+        self.dom_elements["input_character_name"].value = "Simulator"
+
+        document.getElementById("textarea_description").value = ""
 
         # 基本ステータス
         for key in self._status_primary.keys():
@@ -340,6 +383,82 @@ class Simulator:
         export_url = document.getElementById("export_url")
         url = self._prefix_url + self._suffix_url + "?" + data_base64
         export_url.href = url
+
+    def onclick_slot_select(self, event = None) -> None:
+        if event is None:
+            return
+
+        key_description = str(event.currentTarget.value).replace("simulator.json.", "simulator.description.", 1)
+        description = localStorage.getItem(key_description)
+        if description is not None:
+            alert_slot_description = document.getElementById("alert_slot_description")
+            alert_slot_description.hidden = False
+            alert_slot_description.innerText = description
+
+    def onclick_slot_save(self, event = None) -> None:
+        character_name: str = self.dom_elements["input_character_name"].value
+        if len(character_name) == 0:
+            self.view_dialog("キャラクターネームを最低１文字以上設定してください")
+            return
+
+        job_class: str = str(self.dom_elements["job_class"].value).capitalize()
+        dt_now = str(datetime.now().replace(microsecond=0))
+        slot_name: str = f"Name:{character_name}, Job:{job_class}, ({dt_now})"
+        key: str = f"simulator.json.{slot_name}"
+        child_class = document.createElement("option")
+        child_class.value = key
+        child_class.label = slot_name
+        self.dom_elements["select_slot_savelist"].appendChild(child_class)
+
+        data_json: str = self.export_to_json()
+        print("[INFO]", "Save localStorage, key:", key)
+        localStorage.setItem(key, data_json)
+
+        key_description: str = f"simulator.description.{slot_name}"
+        print("[INFO]", "Save localStorage, key:", key)
+        localStorage.setItem(key_description, document.getElementById("textarea_description").value)
+
+    def onclick_slot_load(self, event = None) -> None:
+        idx: int = self.dom_elements["select_slot_savelist"].selectedIndex
+        if idx < 0:
+            return
+
+        key: str = self.dom_elements["select_slot_savelist"].value
+        key_description = key.replace("simulator.json.", "simulator.description.", 1)
+
+        print("[INFO]", "Load localStorage, key:", key)
+        data_json: str = localStorage.getItem(key)
+        if data_json is not None:
+            self.reset_data()
+
+            print("[INFO]", "Load localStorage, key:", key_description)
+            description = localStorage.getItem(key_description)
+            if description is not None:
+                document.getElementById("textarea_description").value = description
+
+            self.import_from_json(data_json)
+            self.calculation()
+            self.draw_img_status_window()
+            self.view_dialog("ロードが完了しました")
+
+    def onclick_slot_delete(self, event = None) -> None:
+        idx: int = self.dom_elements["select_slot_savelist"].selectedIndex
+        if idx < 0:
+            return
+        key: str = self.dom_elements["select_slot_savelist"].value
+        self.dom_elements["select_slot_savelist"].remove(idx)
+
+        alert_slot_description = document.getElementById("alert_slot_description")
+        alert_slot_description.hidden = True
+
+        # Delete JSON
+        print("[INFO]", "Delete localStorage, key:", key)
+        localStorage.removeItem(key)
+
+        # Delete description
+        key_description = key.replace("simulator.json.", "simulator.description.", 1)
+        print("[INFO]", "Delete localStorage, key:", key_description)
+        localStorage.removeItem(key_description)
 
     def calculation(self, event = None) -> None:
         if self._initialized != True:

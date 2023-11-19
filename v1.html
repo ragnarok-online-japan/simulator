@@ -111,18 +111,22 @@
 
                         <div id="collapse_status_primary" class="accordion-collapse collapse">
                             <div class="accordion-body">
+                                <div>
+                                    <label for="input_character_name" class="form-label">キャラクターネーム:</label>
+                                    <input id="input_character_name" type="text" class="form-text" value="Simulator" size="64" maxlength="64">
+                                </div>
                                 <div class="row">
                                     <div class="col-md-2">
                                         <label for="status_base_lv" class="form-label">Lv</label>
                                     </div>
                                     <div class="col-md-2">
-                                        <input id="status_base_lv" type="number" class="form-number" min="1" max="99" value="1">
+                                        <input id="status_base_lv" type="number" class="form-number" min="1" max="999" value="1">
                                     </div>
                                     <div class="col-md-2">
                                         <label for="status_job_lv" class="form-label">Job Lv</label>
                                     </div>
                                     <div class="col-md-2">
-                                        <input id="status_job_lv" type="number" class="form-number" min="1" max="9" value="1">
+                                        <input id="status_job_lv" type="number" class="form-number" min="1" max="99" value="1">
                                     </div>
                                     <div class="col-md-1">
                                         <label for="status_job_class" class="form-label">職業</label>
@@ -138,21 +142,21 @@
                                         <label for="status_str_base" class="form-label">Str</label>
                                     </div>
                                     <div class="col-md-3">
-                                        <input id="status_str_base" type="number" class="form-number" min="1" max="99" value="1">
+                                        <input id="status_str_base" type="number" class="form-number" min="1" max="999" value="1">
                                         + <input id="status_str_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled>
                                     </div>
                                     <div class="col-md-1">
                                         <label for="status_agi_base" class="form-label">Agi</label>
                                     </div>
                                     <div class="col-md-3">
-                                        <input id="status_agi_base" type="number" class="form-number" min="1" max="99" value="1">
+                                        <input id="status_agi_base" type="number" class="form-number" min="1" max="999" value="1">
                                         + <input id="status_agi_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled>
                                     </div>
                                     <div class="col-md-1">
                                         <label for="status_vit_base" class="form-label">Vit</label>
                                     </div>
                                     <div class="col-md-3">
-                                        <input id="status_vit_base" type="number" class="form-number" min="1" max="99" value="1">
+                                        <input id="status_vit_base" type="number" class="form-number" min="1" max="999" value="1">
                                         + <input id="status_vit_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled>
                                     </div>
                                 </div>
@@ -161,21 +165,21 @@
                                         <label for="status_int_base" class="form-label">Int</label>
                                     </div>
                                     <div class="col-md-3">
-                                        <input id="status_int_base" type="number" class="form-number" min="1" max="99" value="1">
+                                        <input id="status_int_base" type="number" class="form-number" min="1" max="999" value="1">
                                         + <input id="status_int_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled>
                                     </div>
                                     <div class="col-md-1">
                                         <label for="status_dex_base" class="form-label">Dex</label>
                                     </div>
                                     <div class="col-md-3">
-                                        <input id="status_dex_base" type="number" class="form-number" min="1" max="99" value="1">
+                                        <input id="status_dex_base" type="number" class="form-number" min="1" max="999" value="1">
                                         + <input id="status_dex_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled>
                                     </div>
                                     <div class="col-md-1">
                                         <label for="status_luk_base" class="form-label">Luk</label>
                                     </div>
                                     <div class="col-md-3">
-                                        <input id="status_luk_base" type="number" class="form-number" min="1" max="99" value="1">
+                                        <input id="status_luk_base" type="number" class="form-number" min="1" max="999" value="1">
                                         + <input id="status_luk_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled>
                                     </div>
                                 </div>
@@ -358,8 +362,6 @@
 
                         <div id="collapse_status_window_image" class="accordion-collapse collapse show">
                             <div class="accordion-body">
-                                <label for="input_character_name" class="form-label">キャラクターネーム:</label>
-                                <input id="input_character_name" type="text" class="form-text" value="フェニックス1号">
                                 <button id="button_draw_status_window" type="button" class="btn btn-primary">ステータスウィンドウ画像を更新</button>
                                 <a id="button_download_status_window" type="button" class="btn btn-success" download="RODB_simulator_status.png" href="#">ダウンロード</a><br>
                                 <img id="img_status_window" width="1" height="1"/>
@@ -377,7 +379,7 @@
                         <div id="collapse_export_data" class="accordion-collapse collapse">
                             <div class="accordion-body">
                                 <div class="mb-3">
-                                    <label for="export_json" class="form-label">JSON Data</label>
+                                    <label for="textarea_import_json" class="form-label">JSON Data</label>
                                     <textarea class="form-control font-futur" id="textarea_import_json" rows="10"></textarea>
                                     <button id="button_import_json" type="button" class="btn btn-primary">JSONからインポート</button>
                                 </div>
@@ -393,13 +395,43 @@
 
                     <div class="accordion-item">
                         <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_load_save" aria-expanded="false" aria-controls="collapse_load_save">
-                                ロード/セーブ
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_description" aria-expanded="false" aria-controls="collapse_description">
+                            説明(Description)
+                        </button>
+                        </h2>
+
+                        <div id="collapse_description" class="accordion-collapse collapse">
+                            <div class="accordion-body">
+                                <div class="row">
+                                    <textarea class="form-control font-futur" id="textarea_description" rows="5"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_save_load" aria-expanded="false" aria-controls="collapse_save_load">
+                                セーブ/ロード
                             </button>
                         </h2>
 
-                        <div id="collapse_load_save" class="accordion-collapse collapse">
+                        <div id="collapse_save_load" class="accordion-collapse collapse">
                             <div class="accordion-body">
+                                <div id="alert_unavailable_save_load" class="alert alert-warning" role="alert" hidden>
+                                    ご利用のブラウザではセーブ/ロード機能は利用できません
+                                </div>
+                                <div id="div_save_load" hidden>
+                                    <div class="text-start">
+                                        <button id="button_slot_load" type="button" class="btn btn-warning">選択したデータをロード</button><br>
+                                        <div id="alert_slot_description" class="alert alert-info" role="alert" hidden></div>
+                                        <select id="select_slot_savelist" class="form-select" size="5" aria-label="保存されたデータ一覧"></select><br>
+                                        <button id="button_slot_save" type="button" class="btn btn-primary">現在のデータをセーブ</button>
+                                    </div>
+                                    <div class="text-end">
+                                        <button id="button_slot_delete" type="button" class="btn btn-danger">[Danger] 選択したデータを削除</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
