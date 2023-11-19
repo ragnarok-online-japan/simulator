@@ -280,11 +280,11 @@
                             <div class="accordion-body">
 
                                 <div class="row">
-                                    <div class="col-md-1">
+                                    <div class="col-md-2">
                                         Max HP<br>
                                         <input id="status_hp_max" type="number" class="form-number" min="0" max="999999" value="1" disabled>
                                     </div>
-                                    <div class="col-md-1">
+                                    <div class="col-md-2">
                                         Max SP<br>
                                         <input id="status_sp_max" type="number" class="form-number" min="0" max="999999" value="1" disabled>
                                     </div>
@@ -299,9 +299,20 @@
                                         +<input id="status_def_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled>
                                     </div>
                                     <div class="col-md-2">
+                                        Matk<br>
+                                        <input id="status_matk_base" type="number" class="form-number" min="0" max="999" value="1" disabled>
+                                        +<input id="status_matk_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled>
+                                    </div>
+                                    <div class="col-md-2">
                                         Mdef<br>
                                         <input id="status_mdef_base" type="number" class="form-number" min="0" max="999" value="1" disabled>
                                         +<input id="status_mdef_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-1">
+                                        Aspd<br>
+                                        <input id="status_aspd" type="number" class="form-number" min="0" max="999" value="1.0" disabled>
                                     </div>
                                     <div class="col-md-1">
                                         Hit<br>
@@ -319,26 +330,15 @@
                                         Critical<br>
                                         <input id="status_critical" type="number" class="form-number" min="0" max="999" value="1" disabled>
                                     </div>
-                                </div>
-                                <div class="row">
+                                    <div class="col-md-1">
+                                    </div>
                                     <div class="col-md-2">
-                                        Matk<br>
-                                        <input id="status_matk_base" type="number" class="form-number" min="0" max="999" value="1" disabled>
-                                        +<input id="status_matk_bonus" type="number" class="form-number" min="0" max="999" value="0" disabled>
-                                    </div>
-                                    <div class="col-md-1">
-                                        Aspd<br>
-                                        <input id="status_aspd" type="number" class="form-number" min="0" max="999" value="1.0" disabled>
-                                    </div>
-                                    <div class="col-md-1">
                                         HP回復量<br>
                                         <input id="status_hp_recovery" type="number" class="form-number" min="0" max="999" value="1" disabled>
                                     </div>
-                                    <div class="col-md-1">
+                                    <div class="col-md-2">
                                         SP回復量<br>
                                         <input id="status_sp_recovery" type="number" class="form-number" min="0" max="999" value="1" disabled>
-                                    </div>
-                                    <div class="col-md-1">
                                     </div>
                                     <div class="col-md-2">
                                         最大所持量<br>
