@@ -1,16 +1,16 @@
 # app.py
+from PIL import Image, ImageFont, ImageDraw
+from io import BytesIO
+from js import location,URLSearchParams,localStorage
+from pyscript import document
 import base64
 import binascii
 import bz2
-from io import BytesIO
 import json
+import pyodide_http
+import requests
 import traceback
 import urllib.parse
-from pyscript import document
-from js import location,URLSearchParams
-from PIL import Image, ImageFont, ImageDraw
-import requests
-import pyodide_http
 pyodide_http.patch_all()
 
 import package
@@ -156,6 +156,9 @@ class Simulator:
 
         self.dom_elements["button_draw_status_window"] = document.getElementById("button_draw_status_window")
         self.dom_elements["button_draw_status_window"].onclick = self.onclick_draw_status_window
+
+        self.dom_elements["button_download_status_window"] = document.getElementById("button_download_status_window")
+        self.dom_elements["button_download_status_window"].onclick = self.onclick_draw_status_window
 
         # 職業情報
         headers={
@@ -404,6 +407,10 @@ class Simulator:
         img_status_window.src = img_str
         img_status_window.width = img.width
         img_status_window.height = img.height
+
+        # Download
+        button_download_status_window = self.dom_elements["button_download_status_window"]
+        button_download_status_window.href = img_str
 
     def view_dialog(self, message: str = "") -> None:
         message_div = document.getElementById("dialog_information_message_div")
