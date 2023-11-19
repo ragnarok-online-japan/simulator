@@ -296,7 +296,7 @@ class Simulator:
                     data_json["status"][key] = value
 
         # dict => json
-        data_json = json.dumps(data_json, indent=4)
+        data_json = json.dumps(data_json, ensure_ascii=False, indent=4)
 
         self.dom_elements["textarea_import_json"].value = data_json
 
