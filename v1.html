@@ -353,7 +353,7 @@
                                 <label for="input_character_name" class="form-label">キャラクターネーム:</label>
                                 <input id="input_character_name" type="text" class="form-text" value="フェニックス1号">
                                 <button id="button_draw_status_window" type="button" class="btn btn-primary">ステータスウィンドウ画像を更新</button>
-                                <a id="button_download_status_window" type="button" class="btn btn-success" download="RODB_simulator_status.png" href="#">Download</a><br>
+                                <a id="button_download_status_window" type="button" class="btn btn-success" download="RODB_simulator_status.png" href="#">ダウンロード</a><br>
                                 <img id="img_status_window" width="1" height="1"/>
                             </div>
                         </div>
@@ -367,15 +367,29 @@
                         </h2>
 
                         <div id="collapse_export_data" class="accordion-collapse collapse">
-                            <div class="row">
-                                <div class="mb-3">
-                                    <label for="export_json" class="form-label">JSON Data</label>
-                                    <textarea class="form-control font-futur" id="textarea_import_json" rows="10"></textarea>
-                                    <button id="button_import_json" type="button" class="btn btn-primary">JSONからインポート</button>
-                                </div>
-                                <div class="mb-3 text-wrap">
-                                    <a id="export_url" class="btn btn-success" href="#" target="_blank">URLにてエクスポート</a>(新しいウィンドウorタブが開きます)
-                                </div>
+                            <div class="mb-3">
+                                <label for="export_json" class="form-label">JSON Data</label>
+                                <textarea class="form-control font-futur" id="textarea_import_json" rows="10"></textarea>
+                                <button id="button_import_json" type="button" class="btn btn-primary">JSONからインポート</button>
+                            </div>
+                            <div class="mb-3">
+                                <a id="export_url" class="btn btn-success" href="#" target="_blank">URLにてエクスポート</a>(新しいウィンドウorタブが開きます)
+                            </div>
+                            <div class="text-end">
+                                <button id="button_reset_data" type="button" class="btn btn-danger">[Danger] リセットボタン</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_load_save" aria-expanded="false" aria-controls="collapse_load_save">
+                            ロード/セーブ
+                        </button>
+                        </h2>
+
+                        <div id="collapse_load_save" class="accordion-collapse collapse">
+                            <div>
                             </div>
                         </div>
                     </div>

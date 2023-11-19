@@ -160,6 +160,9 @@ class Simulator:
         self.dom_elements["button_download_status_window"] = document.getElementById("button_download_status_window")
         self.dom_elements["button_download_status_window"].onclick = self.onclick_draw_status_window
 
+        self.dom_elements["button_reset_data"] = document.getElementById("button_reset_data")
+        self.dom_elements["button_reset_data"].onclick = self.onclick_reset_data
+
         # 職業情報
         headers={
             "Content-Type": "application/json",
@@ -185,6 +188,29 @@ class Simulator:
 
         # initilzed finish
         self._initialized = True
+
+    def onclick_reset_data(self, event = None) -> None:
+        self.reset_data()
+        self.calculation()
+        self.draw_img_status_window()
+        self.view_dialog("リセットが完了しました")
+
+    def reset_data(self) -> None:
+        self.dom_elements["base_lv"].value = 1
+
+        self.dom_elements["job_lv"].value = 1
+
+        self.dom_elements["job_class"].value = "novice"
+
+        self.dom_elements["input_character_name"].value = "フェニックス1号"
+
+        # 基本ステータス
+        for key in self._status_primary.keys():
+            self.dom_elements[key]["base"].value = 1
+
+        # 特性ステータス
+        for key in self._status_talent.keys():
+            self.dom_elements[key]["base"].value = 1
 
     def onclick_import_from_json(self, event = None) -> None:
         try:
