@@ -516,7 +516,7 @@ class Simulator:
 
         weight_max: str = self.dom_elements["weight_max"].value
         zeny: int = 999999999
-        draw.text((216,136), f"Weight:0/{weight_max} Zeny:{zeny:,d}", "#000000", font=font_md, align="right", anchor="rt")
+        draw.text((216,136), f"Weight:0/{weight_max} | Zeny:{zeny:,d}", "#000000", font=font_md, align="right", anchor="rt")
 
         for key in self._status_primary.keys():
             text = self.dom_elements[key]["base"].value
