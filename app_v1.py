@@ -267,20 +267,20 @@ class Simulator:
             self.view_dialog(f"*** ERROR ***\nJSONからのインポートに失敗しました\n{ex}")
 
     def import_from_json(self, data_json: str) -> None:
-        version: int = None
+        format_version: int = None
         try:
             data_dict = json.loads(data_json)
         except json.decoder.JSONDecodeError as ex:
             raise Exception("JSONフォーマットが不正です")
 
-        if "version" in data_dict:
+        if "format_version" in data_dict:
             try:
-                version = int(data_dict["version"])
+                format_version = int(data_dict["format_version"])
             except ValueError:
                 pass
 
-        if version is None or version > self._export_json_format_version:
-            raise Exception(f"未知のJSONフォーマットVersionです\n入力されたフォーマットVersion:{version}")
+        if format_version is None or format_version > self._export_json_format_version:
+            raise Exception(f"未知のJSONフォーマットVersionです\n入力されたフォーマットVersion:{format_version}")
 
         if "status" in data_dict:
             if "base_lv" in data_dict["status"]:
@@ -324,7 +324,7 @@ class Simulator:
 
     def export_to_json(self) -> str:
         data_json: dict[str] = {
-            "version" : self._export_json_format_version,
+            "format_version" : self._export_json_format_version,
             "status" : {
                 "base_lv" : int(self.dom_elements["base_lv"].value),
                 "job_lv" : int(self.dom_elements["job_lv"].value),
