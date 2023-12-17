@@ -69,25 +69,31 @@ def pre_calc(prefix_url: str, dom_elements: dict[str], load_datas: dict[str]) ->
         response = requests.get(prefix_url + f"data/jobs/{parent_direcoty}{job_class}/hp.json", headers=headers)
         if response.status_code == 200:
             data_table["hp"] = response.json()
+        else:
+            data_table["hp"] = {}
 
     # load SP table
     if data_table["sp"] is None or data_table["job_class"] != job_class:
         response = requests.get(prefix_url + f"data/jobs/{parent_direcoty}{job_class}/sp.json", headers=headers)
         if response.status_code == 200:
             data_table["sp"] = response.json()
+        else:
+            data_table["sp"] = {}
 
     # load weapon type table
     if data_table["weapon_type"] is None or data_table["job_class"] != job_class:
         response = requests.get(prefix_url + f"data/jobs/{parent_direcoty}{job_class}/weapon_type.json", headers=headers)
         if response.status_code == 200:
             data_table["weapon_type"] = response.json()
+        else:
+            data_table["weapon_type"] = {}
 
-        if "right" in data_table["weapon_type"]:
-            # Right : Main weapon type
-            child_nodes = dom_elements["select_weapon_type_right"].childNodes
-            for node in child_nodes:
-                dom_elements["select_weapon_type_right"].removeChild(node)
+        # Right : Main weapon type
+        child_nodes = dom_elements["select_weapon_type_right"].childNodes
+        for node in child_nodes:
+            dom_elements["select_weapon_type_right"].removeChild(node)
 
+        if data_table["weapon_type"] is not None and "right" in data_table["weapon_type"]:
             for key in data_table["weapon_type"]["right"]:
                 data = data_table["weapon_type"]["right"][key]
                 child_class = document.createElement("option")
@@ -97,12 +103,12 @@ def pre_calc(prefix_url: str, dom_elements: dict[str], load_datas: dict[str]) ->
 
                 dom_elements["select_weapon_type_right"].appendChild(child_class)
 
-        if "left" in data_table["weapon_type"]:
-            # Left : Sub weapon type
-            child_nodes = dom_elements["select_weapon_type_left"].childNodes
-            for node in child_nodes:
-                dom_elements["select_weapon_type_left"].removeChild(node)
+        # Left : Sub weapon type
+        child_nodes = dom_elements["select_weapon_type_left"].childNodes
+        for node in child_nodes:
+            dom_elements["select_weapon_type_left"].removeChild(node)
 
+        if data_table["weapon_type"] is not None and "left" in data_table["weapon_type"]:
             if len(data_table["weapon_type"]["left"]) == 0:
                 dom_elements["select_weapon_type_left"].disabled = True
             else:
@@ -121,14 +127,22 @@ def pre_calc(prefix_url: str, dom_elements: dict[str], load_datas: dict[str]) ->
     data_table["job_class"] = job_class
 
     # Max HP
-    hp_base_point: int = int(data_table["hp"][str(point["base_lv"])])
+    hp_base_point: int = 0
+    if "additional_info" in load_datas and "hp_base_point" in load_datas["additional_info"]:
+        hp_base_point = load_datas["additional_info"]["hp_base_point"]
+    else:
+        hp_base_point = int(data_table["hp"][str(point["base_lv"])])
     status_hp_max = str(int(hp_base_point + (hp_base_point * (point["vit"] + point["vit_bonus"]) / 100)))
     dom_elements["hp_max"].value = status_hp_max
 
     # HP Recovery
 
     # Max SP
-    sp_base_point: int = int(data_table["sp"][str(point["base_lv"])])
+    sp_base_point: int = 0
+    if "additional_info" in load_datas and "sp_base_point" in load_datas["additional_info"]:
+        sp_base_point = load_datas["additional_info"]["sp_base_point"]
+    else:
+        sp_base_point = int(data_table["sp"][str(point["base_lv"])])
     status_sp_max = str(int(sp_base_point + (sp_base_point * (point["int"] + point["int_bonus"]) / 100)))
     dom_elements["sp_max"].value = status_sp_max
 

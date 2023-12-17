@@ -101,16 +101,25 @@ class Simulator:
         "weight_max":{}
     }
 
+    headers={
+        "Content-Type": "application/json",
+        "Accept-Encoding": None, # delete unsafe header
+        "Connection": None # delete unsafe haader
+    }
+
     def __init__(self, prefix_url = "/", suffix_url="index.html") -> None:
         self._prefix_url = prefix_url
         self._suffix_url = suffix_url
 
+        # Base Lv
         self.dom_elements["base_lv"] = document.getElementById("status_base_lv")
         self.dom_elements["base_lv"].oninput = self.calculation
 
+        # Job Lv
         self.dom_elements["job_lv"] = document.getElementById("status_job_lv")
         self.dom_elements["job_lv"].oninput = self.calculation
 
+        # Job Class
         self.dom_elements["job_class"] = document.getElementById("status_job_class")
         self.dom_elements["job_class"].oninput = self.calculation
 
@@ -139,6 +148,11 @@ class Simulator:
                 }
             else:
                 self.dom_elements[key] = document.getElementById(f"status_{key}")
+
+        # スキル
+        self.dom_elements["collapse_skill"] = document.getElementById("collapse_skill")
+        self.dom_elements["skills"]: dict = {}
+        self.dom_elements["skill_lv"]: dict = {}
 
         # 武器タイプ
         self.dom_elements["select_weapon_type_right"] = document.getElementById("select_weapon_type_right")
@@ -177,14 +191,14 @@ class Simulator:
         if len(self.load_datas["job_classes"]) > 0:
             datalist_job_classes = document.getElementById("datalist_job_classes")
             for idx in self.load_datas["job_classes"]:
-                child_class = document.createElement("option")
+                option = document.createElement("option")
                 data = self.load_datas["job_classes"][idx]
 
-                child_class.value = data["class"]
+                option.value = data["class"]
                 if "display_name" in data:
-                    child_class.label = data["display_name"]
+                    option.label = data["display_name"]
 
-                datalist_job_classes.appendChild(child_class)
+                datalist_job_classes.appendChild(option)
 
             self.dom_elements["job_class"].value = "novice"
 
@@ -208,11 +222,11 @@ class Simulator:
                     print("[TRACE]", "localStorage, key:", key)
 
                     slot_name: str = matches.group(1)
-                    child_class = document.createElement("option")
-                    child_class.value = key
-                    child_class.label = slot_name
+                    option = document.createElement("option")
+                    option.value = key
+                    option.label = slot_name
 
-                    self.dom_elements["select_slot_savelist"].appendChild(child_class)
+                    self.dom_elements["select_slot_savelist"].appendChild(option)
 
             self.dom_elements["button_slot_save"] = document.getElementById("button_slot_save")
             self.dom_elements["button_slot_save"].onclick = self.onclick_slot_save
@@ -237,6 +251,9 @@ class Simulator:
         self.view_dialog("リセットが完了しました")
 
     def reset_data(self) -> None:
+        self._initialized = False
+        print("[TRACE]", "Reset data")
+
         self.dom_elements["base_lv"].value = 1
 
         self.dom_elements["job_lv"].value = 1
@@ -250,14 +267,39 @@ class Simulator:
         # 基本ステータス
         for key in self._status_primary.keys():
             self.dom_elements[key]["base"].value = 1
+            self.dom_elements[key]["bonus"].value = 0
 
         # 特性ステータス
         for key in self._status_talent.keys():
             self.dom_elements[key]["base"].value = 0
+            self.dom_elements[key]["bonus"].value = 0
+
+        # ステータス
+        for key in self._status_result.keys():
+            if key in  ("atk", "def", "matk", "mdef"):
+                self.dom_elements[key]["base"].value = 1
+                self.dom_elements[key]["bonus"].value = 0
+            else:
+                self.dom_elements[key].value = 1
+
+        # スキル
+        self.dom_elements["skill_lv"].clear()
+        for key in self.dom_elements["skills"].keys():
+            self.dom_elements["skills"][key].remove()
+        self.dom_elements["skills"].clear()
+
+        if "additional_info" in self.load_datas:
+            del self.load_datas["additional_info"]["hp_base_point"]
+            del self.load_datas["additional_info"]["sp_base_point"]
+
+        # initialize
+        self.load_datas = {}
+
+        # initilzed finish
+        self._initialized = True
 
     def onclick_import_from_json(self, event = None) -> None:
         try:
-            self.reset_data()
             self.import_from_json(self.dom_elements["textarea_import_json"].value)
             self.calculation()
             self.draw_img_status_window()
@@ -282,6 +324,11 @@ class Simulator:
         if format_version is None or format_version > self._export_json_format_version:
             raise Exception(f"未知のJSONフォーマットVersionです\n入力されたフォーマットVersion:{format_version}")
 
+        if "overwrite" in data_dict and data_dict["overwrite"] == True:
+            pass
+        else:
+            self.reset_data()
+
         if "status" in data_dict:
             if "base_lv" in data_dict["status"]:
                 self.dom_elements["base_lv"].value = data_dict["status"]["base_lv"]
@@ -301,7 +348,69 @@ class Simulator:
                     self.dom_elements[key]["base"].value = data_dict["status"][key]
 
         if "skills" in data_dict:
-            pass
+            skill_list: dict = {}
+            response = requests.get(self._prefix_url + f"data/skill_list.json", headers=self.headers)
+            if response.status_code == 200:
+                skill_list = response.json()
+
+            for key in data_dict["skills"].keys():
+                if key not in skill_list:
+                    print("[WARNING]", f"Unknown skill: {key}")
+                    continue
+
+                if "lv" not in data_dict["skills"][key]:
+                    continue
+
+                lv: int = 0
+                try:
+                    lv = int(data_dict["skills"][key]["lv"])
+                except ValueError:
+                    pass
+
+                skill_name: str = skill_list[key]["name"]
+                max_lv: int = skill_list[key]["max_lv"]
+
+                div_row = document.createElement("div")
+                div_row.setAttribute("id", f"skill.{key}")
+                div_row.setAttribute("class", "row border border-secondary rounded")
+
+                div_col1 = document.createElement("div")
+                div_col1.setAttribute("class", "col-md-4")
+                div_row.appendChild(div_col1)
+
+                skill_label = document.createElement("label")
+                skill_label.setAttribute("class", "form-label")
+                skill_label.setAttribute("for", f"skill_lv.{key}")
+                skill_label.innerText = skill_name
+                div_col1.appendChild(skill_label)
+
+                div_col2 = document.createElement("div")
+                div_col2.setAttribute("class", "col-md-2")
+                div_col2.innerText = "Lv:"
+                div_row.appendChild(div_col2)
+
+                skill_input = document.createElement("input")
+                skill_input.setAttribute("id", f"skill_lv.{key}")
+                skill_input.setAttribute("type", "number")
+                skill_input.setAttribute("name", key)
+                skill_input.setAttribute("min", 0)
+                skill_input.setAttribute("max", max_lv)
+                skill_input.setAttribute("value", lv)
+                skill_input.setAttribute("class", "form-number")
+                div_col2.appendChild(skill_input)
+
+                div_col3 = document.createElement("div")
+                div_col3.setAttribute("class", "col-md-2")
+                div_row.appendChild(div_col3)
+
+                div_col4 = document.createElement("div")
+                div_col4.setAttribute("class", "col-md-4")
+                div_row.appendChild(div_col4)
+
+                self.dom_elements["collapse_skill"].firstElementChild.appendChild(div_row)
+
+                self.dom_elements["skills"][key] = div_row
+                self.dom_elements["skill_lv"][key] = skill_input
 
         if "equipments" in data_dict:
             pass
@@ -310,11 +419,27 @@ class Simulator:
             if "character_name" in data_dict["additional_info"]:
                 self.dom_elements["input_character_name"].value = data_dict["additional_info"]["character_name"]
 
+            if "overwrite" in data_dict and data_dict["overwrite"] == True:
+                if "additional_info" not in self.load_datas:
+                    self.load_datas["additional_info"] = {} #init
+
+                if "hp_base_point" in data_dict["additional_info"]:
+                    try:
+                        self.load_datas["additional_info"]["hp_base_point"] = int(data_dict["additional_info"]["hp_base_point"])
+                    except ValueError:
+                        pass
+                if "sp_base_point" in data_dict["additional_info"]:
+                    try:
+                        self.load_datas["additional_info"]["sp_base_point"] = int(data_dict["additional_info"]["sp_base_point"])
+                    except ValueError:
+                        pass
+
     def import_from_base64(self, data_base64: str) -> bool:
         success: bool = False
         try:
             data_compressed = binascii.a2b_base64(data_base64.encode("utf-8"))
             data_json = bz2.decompress(data_compressed)
+            self.dom_elements["textarea_import_json"].value = data_json.decode("utf-8")
             self.import_from_json(data_json.decode("utf-8"))
             success = True
         except Exception as ex:
@@ -367,6 +492,21 @@ class Simulator:
                 if value > 0:
                     data_json["status"][key] = value
 
+        for key in self.dom_elements["skill_lv"].keys():
+            value: int = 0
+            try:
+                value = int(self.dom_elements["skill_lv"][key].value)
+            except ValueError:
+                pass
+
+            data_json["skills"][key] = {
+                "lv": value
+            }
+
+        if "additional_info" in self.load_datas:
+            for key in self.load_datas["additional_info"]:
+                data_json["additional_info"][key] = self.load_datas["additional_info"][key]
+
         # dict => json
         data_json = json.dumps(data_json, ensure_ascii=False, indent=4)
 
@@ -384,7 +524,7 @@ class Simulator:
         data_base64 = binascii.b2a_base64(data_compressed).decode("utf-8")
 
         export_url = document.getElementById("export_url")
-        url = self._prefix_url + self._suffix_url + "?" + data_base64
+        url = self._prefix_url + self._suffix_url + "?" + data_base64 + "#main"
         export_url.href = url
 
     def onclick_slot_select(self, event = None) -> None:
@@ -408,10 +548,10 @@ class Simulator:
         dt_now = str(datetime.now().replace(microsecond=0))
         slot_name: str = f"Name:{character_name}, Job:{job_class}, ({dt_now})"
         key: str = f"simulator.json.{slot_name}"
-        child_class = document.createElement("option")
-        child_class.value = key
-        child_class.label = slot_name
-        self.dom_elements["select_slot_savelist"].appendChild(child_class)
+        option = document.createElement("option")
+        option.value = key
+        option.label = slot_name
+        self.dom_elements["select_slot_savelist"].appendChild(option)
 
         data_json: str = self.export_to_json()
         print("[INFO]", "Save localStorage, key:", key)
@@ -505,18 +645,18 @@ class Simulator:
 
         draw.text((16,50), "HP", "#000000", font=font_md, align="left")
         hp_max = self.dom_elements["hp_max"].value
-        draw.text((100,58), f"{hp_max} / {hp_max}", "#000000", font=font_md, align="center", anchor="mm")
+        draw.text((100,50), f"{hp_max} / {hp_max}", "#000000", font=font_md, align="center", anchor="ma")
 
         draw.text((16,66), "SP", "#000000", font=font_md, align="left")
         sp_max = self.dom_elements["sp_max"].value
-        draw.text((100,72), f"{sp_max} / {sp_max}", "#000000", font=font_md, align="center", anchor="mm")
+        draw.text((100,66), f"{sp_max} / {sp_max}", "#000000", font=font_md, align="center", anchor="ma")
 
         draw.text((16,100), "Base Lv. " + self.dom_elements["base_lv"].value, "#000000", font=font_md, align="left")
         draw.text((16,112), "Job Lv. " + self.dom_elements["job_lv"].value, "#000000", font=font_md, align="left")
 
         weight_max: str = self.dom_elements["weight_max"].value
-        zeny: int = 999999999
-        draw.text((216,136), f"Weight:0/{weight_max} | Zeny:{zeny:,d}", "#000000", font=font_md, align="right", anchor="rt")
+        zeny: int = 1
+        draw.text((216,134), f"Weight:0/{weight_max} | Zeny:{zeny:,d}", "#000000", font=font_md, align="right", anchor="ra")
 
         for key in self._status_primary.keys():
             text = self.dom_elements[key]["base"].value
