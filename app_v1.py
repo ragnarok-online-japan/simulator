@@ -252,6 +252,7 @@ class Simulator:
 
     def reset_data(self) -> None:
         self._initialized = False
+
         print("[TRACE]", "Reset data")
 
         self.dom_elements["base_lv"].value = 1
@@ -292,7 +293,6 @@ class Simulator:
             del self.load_datas["additional_info"]["hp_base_point"]
             del self.load_datas["additional_info"]["sp_base_point"]
 
-        # initialize
         self.load_datas = {}
 
         # initilzed finish
