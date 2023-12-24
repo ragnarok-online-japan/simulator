@@ -720,7 +720,8 @@ class Simulator:
 def main():
     query_strings = URLSearchParams.new(location.search)
 
-    instance = Simulator("https://rodb.aws.0nyx.net/simulator/", "v1.html")
+    prefix_url: str = f"{location.protocol}//{location.host}/simulator/"
+    instance = Simulator(prefix_url, "v1.html")
 
     result_import: bool = None
     if str(query_strings) != "":
