@@ -22,4 +22,5 @@ jobs:
                   port: ${{ secrets.SSH_PORT }}
                   script: |
                     cd /var/www/html/simulator/
+                    git checkout main
                     git pull origin main
