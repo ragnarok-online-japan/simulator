@@ -729,15 +729,22 @@ def main():
         data_base64 = urllib.parse.unquote(data)
         result_import = instance.import_from_base64(data_base64)
 
+    execute_calculation: bool = True
     if result_import is not None:
         if result_import == True:
             instance.view_dialog("インポートが完了しました")
         else:
             instance.view_dialog("*** ERROR ***\nインポートが失敗しました")
-            return
+            execute_calculation = False
 
-    instance.calculation()
-    instance.draw_img_status_window()
+    if execute_calculation == True:
+        instance.calculation()
+        instance.draw_img_status_window()
+
+    # preloader
+    preloader = document.getElementById("preloader")
+    if preloader:
+        preloader.remove()
 
 if __name__ == "__main__":
     main()
