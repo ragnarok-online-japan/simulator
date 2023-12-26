@@ -1,0 +1,30 @@
+@font-face {
+    font-family: "melete-regular";
+    src: url("/simulator/assets/font/Melete-Regular.otf") format("opentype");
+}
+
+@font-face {
+    font-family: "Source Han Code JP";
+    src: url("/simulator/assets/font/SourceHanCodeJP-Medium.otf") format("opentype");
+}
+
+#header h1.logo {
+    font-family: "melete-regular";
+}
+
+#hero h1 {
+    font-family: "melete-regular";
+}
+
+#footer div.footer-contact h3 {
+    font-family: "melete-regular";
+}
+
+textarea {
+    font-family: "Source Han Code JP", monospace;
+}
+
+dialog {
+    border: 0px;
+    background-color: transparent;
+}

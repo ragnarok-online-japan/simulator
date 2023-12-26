@@ -5,39 +5,38 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>RODB - Simulator</title>
-    <meta content="RODBはMMO「Ragnarok Online」に関するデータを保管するサイトです" name="description">
-    <meta content="ro,jro,ragnaok,ragnarok online,マロコロ" name="keywords">
+    <title>Simulator</title>
+    <meta content="Ragnarok Online status&amp;skill Simulator" name="description">
+    <meta content="ro,jro,ragnaok,ragnarok online,simulator" name="keywords">
     <meta content="index, follow" name="Robots">
 
-    <meta property="og:url" content="https://rodb.aws.0nyx.net/simulator/v1.html">
+    <meta property="og:url" content="https://rojd.0nyx.net/simulator/v1.html">
     <meta property="og:type" content="article" />
-    <meta property="og:title" content="RODB - Simulator" />
-    <meta property="og:description" content="RODB SimulatorはMMO「Ragnarok Online」のステータス&amp;スキルシミュレータです" />
-    <meta property="og:site_name" content="RODB" />
+    <meta property="og:title" content="Simulator" />
+    <meta property="og:description" content="SimulatorはMMO「Ragnarok Online」のステータス&amp;スキルシミュレータです" />
+    <meta property="og:site_name" content="Rgnarok Online Japan Developer" />
     <!-- <meta property="og:image" content=""> -->
 
     <!-- Vendor CSS Files -->
-    <link href="/assets/vendor/aos/aos.css" rel="stylesheet">
     <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
     <link href="/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
     <link href="/assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
     <link href="/assets/vendor/remixicon/remixicon.css" rel="stylesheet">
-    <link href="/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
 
     <!-- Template Main CSS File -->
     <link href="/assets/css/style.css" rel="stylesheet">
 
-    <link href="/assets/css/rodb.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+    <!-- Simulator CSS File -->
+    <link href="./assets/css/style.css" rel="stylesheet">
 
     <!-- PyScript -->
     <link rel="stylesheet" href="https://pyscript.net/releases/2023.11.1/core.css">
     <script type="module" src="https://pyscript.net/releases/2023.11.1/core.js"></script>
 
-    <!-- =======================================================
-  * Template Name: OnePage - v4.7.0
+  <!-- =======================================================
+  * Template Name: OnePage
+  * Updated: Sep 18 2023 with Bootstrap v5.3.2
   * Template URL: https://bootstrapmade.com/onepage-multipurpose-bootstrap-template/
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
@@ -50,14 +49,11 @@
     <header id="header" class="fixed-top">
         <div class="container d-flex align-items-center justify-content-between">
 
-            <h1 class="logo"><a href="/">RODB</a></h1>
-            <!-- Uncomment below if you prefer to use an image logo -->
-            <!-- <a href="index.html" class="logo"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
+            <h1 class="logo"><a href="/">Ragnarok Online Japan Developers</a></h1>
 
             <nav id="navbar" class="navbar">
                 <ul>
                     <li><a class="nav-link scrollto active" href="/">Home</a></li>
-                    <li><a class="nav-link scrollto" href="/#services">Services</a></li>
                     <li><a class="nav-link scrollto" href="index.html#team">Team</a></li>
                 </ul>
                 <i class="bi bi-list mobile-nav-toggle"></i>
@@ -71,8 +67,7 @@
         <div class="container position-relative" data-aos="fade-up" data-aos-delay="100">
             <div class="row justify-content-center">
                 <div class="col-xl-7 col-lg-9 text-center">
-                    <h1>RODB</h1>
-                    <h2>Japan MMO: Ragnarok Online Database</h2>
+                    <h1>Ragnarok Online Japan Developers</h1>
                 </div>
             </div>
 
@@ -372,7 +367,7 @@
                         <div id="collapse_status_window_image" class="accordion-collapse collapse show">
                             <div class="accordion-body">
                                 <button id="button_draw_status_window" type="button" class="btn btn-primary">ステータスウィンドウ画像を更新</button>
-                                <a id="button_download_status_window" class="btn btn-success" download="RODB_simulator_status.png" href="#">ダウンロード</a><br>
+                                <a id="button_download_status_window" class="btn btn-success" download="simulator_status.png" href="#">ダウンロード</a><br>
                                 <img id="img_status_window" src="data:image/gif;base64,R0lGODlhAQABAGAAACH5BAEKAP8ALAAAAAABAAEAAAgEAP8FBAA7" width="1" height="1" alt="status window">
                             </div>
                         </div>
@@ -463,20 +458,9 @@
                 <div class="row">
 
                     <div class="col-lg-3 col-md-6 footer-contact">
-                        <h3>RODB</h3>
+                        <h3>Ragnarok Online Japan Developers</h3>
                         <p>
                         </p>
-                    </div>
-
-                    <div class="col-lg-2 col-md-6 footer-links">
-                        <h4>Useful Links</h4>
-                        <ul>
-                            <li><i class="bx bx-chevron-right"></i> <a href="/#">Home</a></li>
-                            <li><i class="bx bx-chevron-right"></i> <a href="/#services">Services</a></li>
-                            <li><i class="bx bx-chevron-right"></i> <a href="index.html#team">Team</a></li>
-                            <li><i class="bx bx-chevron-right"></i> <a
-                                    href="https://www.amazon.co.jp/hz/wishlist/ls/2EK058T5A6BN7">Amazon欲しいものリスト</a></li>
-                        </ul>
                     </div>
 
                 </div>
@@ -487,7 +471,7 @@
 
             <div class="me-md-auto text-center text-md-start">
                 <div class="copyright">
-                    &copy; Copyright <strong><span>0nyx.net</span></strong>. All Rights Reserved<br>
+                    &copy; Copyright <strong><span>Ragnarok Online Japan Developers</span></strong>. All Rights Reserved<br>
                     当サイトで公開している元データは下記に帰属しており、再配布は禁止しております<br>
                     &copy; Gravity Co., Ltd. &amp; LeeMyoungJin(studio DTDS) All rights reserved.<br>
                     &copy; GungHo Online Entertainment, Inc. All Rights Reserved.
@@ -501,7 +485,6 @@
                 </div>
             </div>
             <div class="social-links text-center text-md-right pt-3 pt-md-0">
-                <a href="https://twitter.com/_m10i" class="twitter"><i class="bx bxl-twitter"></i></a>
             </div>
         </div>
     </footer><!-- End Footer -->
@@ -524,28 +507,12 @@
             class="bi bi-arrow-up-short"></i></a>
 
     <!-- Vendor JS Files -->
-    <script src="/assets/vendor/purecounter/purecounter.js"></script>
-    <script src="/assets/vendor/aos/aos.js"></script>
     <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="/assets/vendor/glightbox/js/glightbox.min.js"></script>
-    <script src="/assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
-    <script src="/assets/vendor/swiper/swiper-bundle.min.js"></script>
-    <!--<script src="/assets/vendor/php-email-form/validate.js"></script>-->
 
     <script type="py" src="/simulator/app_v1.py" config="/simulator/pyscript.json"></script>
 
     <!-- Template Main JS File -->
     <script src="/assets/js/main.js"></script>
-
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YCM65EZMQL"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-
-        gtag('config', 'G-YCM65EZMQL');
-    </script>
 </body>
 
 </html>

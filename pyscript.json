@@ -6,9 +6,9 @@
         "Pillow"
     ],
     "files": {
-        "/simulator/assets/statwin_bg.png": "./assets/statwin_bg.png",
-        "/simulator/assets/SourceHanCodeJP-Medium.otf": "./assets/SourceHanCodeJP-Medium.otf",
-        "/simulator/assets/Melete-Regular.otf": "./assets/Melete-Regular.otf",
+        "/simulator/assets/img/statwin_bg.png": "./assets/img/statwin_bg.png",
+        "/simulator/assets/font/SourceHanCodeJP-Medium.otf": "./assets/font/SourceHanCodeJP-Medium.otf",
+        "/simulator/assets/font/Melete-Regular.otf": "./assets/font/Melete-Regular.otf",
         "/simulator/package/__init__.py": "./package/__init__.py",
         "/simulator/package/module_v1.py": "./package/module_v1.py"
     }

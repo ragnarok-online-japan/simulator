@@ -626,14 +626,14 @@ class Simulator:
         self.calculation()
         self.draw_img_status_window()
 
-    def draw_img_status_window(self, img_src: str = "./assets/statwin_bg.png"):
+    def draw_img_status_window(self, img_src: str = "./assets/img/statwin_bg.png"):
         img = Image.open(img_src)
-        font_lg = ImageFont.truetype("./assets/SourceHanCodeJP-Medium.otf", size=10)
-        font_md = ImageFont.truetype("./assets/SourceHanCodeJP-Medium.otf", size=9)
-        font_logo = ImageFont.truetype("./assets/Melete-Regular.otf", size=11)
+        font_lg = ImageFont.truetype("./assets/font/SourceHanCodeJP-Medium.otf", size=10)
+        font_md = ImageFont.truetype("./assets/font/SourceHanCodeJP-Medium.otf", size=9)
+        font_logo = ImageFont.truetype("./assets/font/SourceHanCodeJP-Medium.otf", size=8)
         draw = ImageDraw.Draw(img)
 
-        draw.text((0,220), "Powerd by RODB", "#16507b", font=font_logo, align="left")
+        draw.text((0,200), "Powerd by\n Ragnarok Online Japan Developers", "#16507b", font=font_logo, align="left")
 
         draw.text((20,1), "基本情報", "#000000", font=font_lg, align="left")
         draw.text((236,1), "ステータス", "#000000", font=font_lg, align="left")
