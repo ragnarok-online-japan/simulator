@@ -290,8 +290,10 @@ class Simulator:
         self.dom_elements["skills"].clear()
 
         if "additional_info" in self.load_datas:
-            del self.load_datas["additional_info"]["hp_base_point"]
-            del self.load_datas["additional_info"]["sp_base_point"]
+            if "hp_base_point" in self.load_datas["additional_info"]:
+                del self.load_datas["additional_info"]["hp_base_point"]
+            if "sp_base_point" in self.load_datas["additional_info"]:
+                del self.load_datas["additional_info"]["sp_base_point"]
 
         # initilzed finish
         self._initialized = True
@@ -558,6 +560,7 @@ class Simulator:
         key_description: str = f"simulator.description.{slot_name}"
         print("[INFO]", "Save localStorage, key:", key)
         localStorage.setItem(key_description, document.getElementById("textarea_description").value)
+        self.view_dialog("セーブが完了しました")
 
     def onclick_slot_load(self, event = None) -> None:
         idx: int = self.dom_elements["select_slot_savelist"].selectedIndex
