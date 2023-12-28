@@ -62,6 +62,7 @@ def pre_calc(prefix_url: str, dom_elements: dict[str], load_datas: dict[str]) ->
 
     if job_class_id is None:
         # 正しいjobが選択されてない場合はreturn
+        print("[WARNING]", "Invalid job class id")
         return
 
     # load HP table
@@ -132,7 +133,7 @@ def pre_calc(prefix_url: str, dom_elements: dict[str], load_datas: dict[str]) ->
         hp_base_point = load_datas["additional_info"]["hp_base_point"]
     else:
         hp_base_point = int(data_table["hp"][str(point["base_lv"])])
-    status_hp_max = str(int(hp_base_point + (hp_base_point * (point["vit"] + point["vit_bonus"]) / 100)))
+    status_hp_max = int(hp_base_point + (hp_base_point * (point["vit"] + point["vit_bonus"]) / 100))
     dom_elements["hp_max"].value = status_hp_max
 
     # HP Recovery
@@ -143,60 +144,60 @@ def pre_calc(prefix_url: str, dom_elements: dict[str], load_datas: dict[str]) ->
         sp_base_point = load_datas["additional_info"]["sp_base_point"]
     else:
         sp_base_point = int(data_table["sp"][str(point["base_lv"])])
-    status_sp_max = str(int(sp_base_point + (sp_base_point * (point["int"] + point["int_bonus"]) / 100)))
+    status_sp_max = int(sp_base_point + (sp_base_point * (point["int"] + point["int_bonus"]) / 100))
     dom_elements["sp_max"].value = status_sp_max
 
     # SP Recovery
 
     # Atk(not bow)
-    status_atk = str(int((point["str"] + point["str_bonus"])
+    status_atk = int((point["str"] + point["str_bonus"])
             + (point["dex"] + point["dex_bonus"]) * 0.2
             + (point["luk"] + point["luk_bonus"]) * 0.3
-            ))
+            )
     dom_elements["atk"]["base"].value = status_atk
 
     # Def
-    status_def_base = str(int(point["base_lv"] * 0.5
-                            + (point["agi"] + point["agi_bonus"]) * 0.2
-                            + (point["vit"] + point["vit_bonus"]) * 0.5
-                            ))
+    status_def_base = int(point["base_lv"] * 0.5
+                        + (point["agi"] + point["agi_bonus"]) * 0.2
+                        + (point["vit"] + point["vit_bonus"]) * 0.5
+                        )
     dom_elements["def"]["base"].value = status_def_base
 
     # Matk
-    status_matk_base = str(int((point["int"] + point["int_bonus"])
+    status_matk_base = int((point["int"] + point["int_bonus"])
                             + (point["dex"] + point["dex_bonus"]) * 0.2
                             + (point["luk"] + point["luk_bonus"]) * 0.3
-                            ))
+                            )
     dom_elements["matk"]["base"].value = status_matk_base
 
     # Mdef
-    status_mdef_base = str(int(point["base_lv"] * 0.2
+    status_mdef_base = int(point["base_lv"] * 0.2
                             + (point["int"] + point["int_bonus"])
                             + (point["vit"] + point["vit_bonus"]) * 0.2
                             + (point["dex"] + point["dex_bonus"]) * 0.2
-                            ))
+                            )
     dom_elements["mdef"]["base"].value = status_mdef_base
 
     # Hit
-    status_hit = str(int(175 + point["base_lv"]
+    status_hit = int(175 + point["base_lv"]
                         + (point["dex"] + point["dex_bonus"])
                         + (point["luk"] + point["luk_bonus"]) * 0.3
-                        ))
+                        )
     dom_elements["hit"].value = status_hit
 
     # Flee
-    status_flee = str(int(100 + point["base_lv"]
+    status_flee = int(100 + point["base_lv"]
                         + (point["agi"] + point["agi_bonus"])
                         + (point["luk"] + point["luk_bonus"]) * 0.2
-                        ))
+                        )
     dom_elements["flee"].value = status_flee
 
     # 完全回避 : Complete avoidance
-    status_complete_avoidance = str(1+ int(((point["luk"] + point["luk_bonus"]) *0.1)*10)/10)
+    status_complete_avoidance = 1 + int(((point["luk"] + point["luk_bonus"]) *0.1)*10)/10
     dom_elements["complete_avoidance"].value = status_complete_avoidance
 
     # Critical
-    status_critical = str(int((1 + ((point["luk"] + point["luk_bonus"]) *0.3))*10)/10)
+    status_critical = int((1 + ((point["luk"] + point["luk_bonus"]) *0.3))*10)/10
     dom_elements["critical"].value = status_critical
 
     # Aspd(hand)
@@ -205,5 +206,7 @@ def pre_calc(prefix_url: str, dom_elements: dict[str], load_datas: dict[str]) ->
     shield_correction_point: float = 0 #盾があれば-7～
     on_horseback_point: float = 1 #未騎乗
     #on_horseback_point: float = 0.5 + on_horseback_skill_lv * 0.1 #騎乗時
-    status_aspd = str(int((aspd_base_point + (math.sqrt(((point["agi"] + point["agi_bonus"]) * 3027 / 300) + ((point["dex"] + point["dex_bonus"]) * 55 / 300)) * (1 - aspd_penalty)) + shield_correction_point) * on_horseback_point * 10)/10)
+    status_aspd = int((aspd_base_point
+                        + (math.sqrt(((point["agi"] + point["agi_bonus"]) * 3027 / 300)
+                        + ((point["dex"] + point["dex_bonus"]) * 55 / 300)) * (1 - aspd_penalty)) + shield_correction_point) * on_horseback_point * 10)/10
     dom_elements["aspd"].value = status_aspd
