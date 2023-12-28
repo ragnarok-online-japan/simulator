@@ -609,7 +609,7 @@ class Simulator:
             return
 
         success: bool = True
-        print("[TRACE]", "Call def calculation")
+        print("[TRACE]", "Call calculation")
 
         try:
             # calculation
