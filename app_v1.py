@@ -324,11 +324,6 @@ class Simulator:
         if format_version is None or format_version > self._export_json_format_version:
             raise Exception(f"未知のJSONフォーマットVersionです\n入力されたフォーマットVersion:{format_version}")
 
-        if "overwrite" in data_dict and data_dict["overwrite"] == True:
-            pass
-        else:
-            self.reset_data()
-
         if "status" in data_dict:
             if "base_lv" in data_dict["status"]:
                 self.dom_elements["base_lv"].value = data_dict["status"]["base_lv"]
@@ -615,6 +610,7 @@ class Simulator:
         try:
             # calculation
             package.module_v1.pre_calc(self._prefix_url, self.dom_elements, self.load_datas)
+
 
         except Exception as ex:
             success = False
