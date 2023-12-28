@@ -186,14 +186,12 @@ class Simulator:
             "Connection": None # delete unsafe haader
         }
         response = requests.get(prefix_url + "data/job_classes.json", headers=headers)
-        self.load_datas["job_classes"] = response.json()
+        self.load_datas["job_classes"]: list = response.json()
 
         if len(self.load_datas["job_classes"]) > 0:
             datalist_job_classes = document.getElementById("datalist_job_classes")
-            for idx in self.load_datas["job_classes"]:
+            for idx, data in enumerate(self.load_datas["job_classes"]):
                 option = document.createElement("option")
-                data = self.load_datas["job_classes"][idx]
-
                 option.value = data["class"]
                 if "display_name" in data:
                     option.label = data["display_name"]

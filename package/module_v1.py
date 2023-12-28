@@ -50,19 +50,19 @@ def pre_calc(prefix_url: str, dom_elements: dict[str], load_datas: dict[str]) ->
     }
 
     # 職業
-    job_class: str = str(dom_elements["job_class"].value).replace(" ", "_")
-    job_class_id: int = None
+    job_class: str = str(dom_elements["job_class"].value).strip()
+    job_class_idx: int = None
     parent_direcoty: str = ""
     if "job_classes" in load_datas:
-        job_class_ids = [key for key, value in load_datas["job_classes"].items() if value["class"] == job_class]
-        if len(job_class_ids) > 0:
-            job_class_id = job_class_ids[0]
-            if  "parent_directory" in load_datas["job_classes"][job_class_id]:
-                parent_direcoty = load_datas["job_classes"][job_class_id]["parent_directory"] + "/"
+        job_classes = [idx for idx, value in enumerate(load_datas["job_classes"]) if value["class"] == job_class]
+        if len(job_classes) > 0:
+            job_class_idx = job_classes[0]
+            if  "parent_directory" in load_datas["job_classes"][job_class_idx]:
+                parent_direcoty = load_datas["job_classes"][job_class_idx]["parent_directory"] + "/"
 
-    if job_class_id is None:
+    if job_class_idx is None:
         # 正しいjobが選択されてない場合はreturn
-        print("[WARNING]", "Invalid job class id")
+        print("[WARNING]", f"Invalid job class: {job_class}")
         return
 
     # load HP table
