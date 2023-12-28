@@ -293,8 +293,6 @@ class Simulator:
             del self.load_datas["additional_info"]["hp_base_point"]
             del self.load_datas["additional_info"]["sp_base_point"]
 
-        self.load_datas = {}
-
         # initilzed finish
         self._initialized = True
 
