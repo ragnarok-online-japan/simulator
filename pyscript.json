@@ -9,7 +9,7 @@
         "/simulator/assets/img/statwin_bg.png": "./assets/img/statwin_bg.png",
         "/simulator/assets/font/SourceHanCodeJP-Medium.otf": "./assets/font/SourceHanCodeJP-Medium.otf",
         "/simulator/assets/font/Melete-Regular.otf": "./assets/font/Melete-Regular.otf",
-        "/simulator/package/__init__.py": "./package/__init__.py",
+        "/simulator/package/abstract_module.py": "./package/abstract_module.py",
         "/simulator/package/module_v1.py": "./package/module_v1.py"
     }
 }

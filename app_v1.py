@@ -13,19 +13,27 @@ import pyodide_http
 import requests
 import traceback
 import urllib.parse
-pyodide_http.patch_all()
 
-import package
+from package.module_v1 import CalculationModule
+pyodide_http.patch_all()
 
 
 class Simulator:
     _initialized: bool = False
     _export_json_format_version: int = 1
     _prefix_url: str = "/"
-    _suffix_url: str = "index.html"
+    _suffix_url: str = f"v{_export_json_format_version}.html"
+
+    _calculation_module: CalculationModule = None
+    _job_class_name: str = None
 
     dom_elements: dict[str] = {}
-    load_datas: dict[str] = {}
+    load_datas: dict[str] = {
+        "job_classese": None,
+        "hp": None,
+        "sp": None,
+        "weapon_type": None
+    }
 
     _status_primary: dict = {
         "str": {
@@ -603,12 +611,45 @@ class Simulator:
             return
 
         success: bool = True
-        print("[TRACE]", "Call calculation")
 
         try:
             # calculation
-            package.module_v1.pre_calc(self._prefix_url, self.dom_elements, self.load_datas)
+            job_class_name = self.dom_elements["job_class"].value.strip()
+            if self._calculation_module is None \
+                or (self._job_class_name is not None and self._job_class_name != job_class_name):
+                # Re-initalize
+                self._calculation_module = CalculationModule(self._prefix_url, self.dom_elements, self.load_datas)
 
+            if self._calculation_module.is_valid() == True:
+                # save
+                self._job_class_name = job_class_name
+
+                job_class_idx = self._calculation_module.get_job_class_idx()
+                job_data = self.load_datas["job_classes"][job_class_idx]
+
+                maximum = job_data["base_lv_max"]
+                self.dom_elements["base_lv"].max = maximum
+                if int(self.dom_elements["base_lv"].max) > maximum:
+                    self.dom_elements["base_lv"].value = maximum
+
+                maximum = job_data["job_lv_max"]
+                self.dom_elements["job_lv"].max = maximum
+                if int(self.dom_elements["job_lv"].max) > maximum:
+                    self.dom_elements["job_lv"].value = maximum
+
+                maximum = job_data["base_point_max"]
+                for key in self._status_primary.keys():
+                    self.dom_elements[key]["base"].max = maximum
+                    if int(self.dom_elements[key]["base"].max) > maximum:
+                        self.dom_elements[key]["base"].value = maximum
+
+                maximum = job_data["talent_point_max"]
+                for key in self._status_talent.keys():
+                    self.dom_elements[key]["base"].max = maximum
+                    if int(self.dom_elements[key]["base"].max) > maximum:
+                        self.dom_elements[key]["base"].value = maximum
+
+                self._calculation_module.pre_calc()
 
         except Exception as ex:
             success = False

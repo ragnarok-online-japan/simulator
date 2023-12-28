@@ -3,210 +3,184 @@ import math
 import requests
 from pyscript import document
 
-data_table: dict = {
-    "job_class": None,
-    "hp": None,
-    "sp": None,
-    "weapon_type": None
-}
+from .abstract_module import AbstractCalculationModule
 
-def pre_calc(prefix_url: str, dom_elements: dict[str], load_datas: dict[str]) -> dict:
-    point: dict = {
-        "base_lv": int(dom_elements["base_lv"].value),
-        "job_lv": int(dom_elements["base_lv"].value),
-        "str": int(dom_elements["str"]["base"].value),
-        "agi": int(dom_elements["agi"]["base"].value),
-        "vit": int(dom_elements["vit"]["base"].value),
-        "int": int(dom_elements["int"]["base"].value),
-        "dex": int(dom_elements["dex"]["base"].value),
-        "luk": int(dom_elements["luk"]["base"].value),
-
-        "str_bonus": int(dom_elements["str"]["bonus"].value),
-        "agi_bonus": int(dom_elements["agi"]["bonus"].value),
-        "vit_bonus": int(dom_elements["vit"]["bonus"].value),
-        "int_bonus": int(dom_elements["int"]["bonus"].value),
-        "dex_bonus": int(dom_elements["dex"]["bonus"].value),
-        "luk_bonus": int(dom_elements["luk"]["bonus"].value),
-
-        "pow": int(dom_elements["pow"]["base"].value),
-        "sta": int(dom_elements["sta"]["base"].value),
-        "wis": int(dom_elements["wis"]["base"].value),
-        "spl": int(dom_elements["spl"]["base"].value),
-        "con": int(dom_elements["con"]["base"].value),
-        "crt": int(dom_elements["crt"]["base"].value),
-
-        "pow_bonus": int(dom_elements["pow"]["bonus"].value),
-        "sta_bonus": int(dom_elements["sta"]["bonus"].value),
-        "wis_bonus": int(dom_elements["wis"]["bonus"].value),
-        "spl_bonus": int(dom_elements["spl"]["bonus"].value),
-        "con_bonus": int(dom_elements["con"]["bonus"].value),
-        "crt_bonus": int(dom_elements["crt"]["bonus"].value)
+class CalculationModule(AbstractCalculationModule):
+    _in_memory: dict = {
     }
 
-    headers={
-        "Content-Type": "application/json",
-        "Accept-Encoding": None, # delete unsafe header
-        "Connection": None # delete unsafe haader
-    }
+    def __init__(self, prefix_url: str, dom_elements: dict[str], load_datas: dict[str]) -> None:
+        # init
+        self._valid = False
 
-    # 職業
-    job_class: str = str(dom_elements["job_class"].value).strip()
-    job_class_idx: int = None
-    parent_direcoty: str = ""
-    if "job_classes" in load_datas:
-        job_classes = [idx for idx, value in enumerate(load_datas["job_classes"]) if value["class"] == job_class]
-        if len(job_classes) > 0:
-            job_class_idx = job_classes[0]
-            if  "parent_directory" in load_datas["job_classes"][job_class_idx]:
-                parent_direcoty = load_datas["job_classes"][job_class_idx]["parent_directory"] + "/"
+        self._prefix_url = prefix_url
+        self._dom_elements = dom_elements
+        self._load_datas = load_datas
 
-    if job_class_idx is None:
-        # 正しいjobが選択されてない場合はreturn
-        print("[WARNING]", f"Invalid job class: {job_class}")
-        return
+        self._point: dict = {
+            "base_lv": int(dom_elements["base_lv"].value),
+            "job_lv": int(dom_elements["base_lv"].value),
+            "str": int(dom_elements["str"]["base"].value),
+            "agi": int(dom_elements["agi"]["base"].value),
+            "vit": int(dom_elements["vit"]["base"].value),
+            "int": int(dom_elements["int"]["base"].value),
+            "dex": int(dom_elements["dex"]["base"].value),
+            "luk": int(dom_elements["luk"]["base"].value),
 
-    # load HP table
-    if data_table["hp"] is None or data_table["job_class"] != job_class:
-        response = requests.get(prefix_url + f"data/jobs/{parent_direcoty}{job_class}/hp.json", headers=headers)
-        if response.status_code == 200:
-            data_table["hp"] = response.json()
-        else:
-            data_table["hp"] = {}
+            "str_bonus": int(dom_elements["str"]["bonus"].value),
+            "agi_bonus": int(dom_elements["agi"]["bonus"].value),
+            "vit_bonus": int(dom_elements["vit"]["bonus"].value),
+            "int_bonus": int(dom_elements["int"]["bonus"].value),
+            "dex_bonus": int(dom_elements["dex"]["bonus"].value),
+            "luk_bonus": int(dom_elements["luk"]["bonus"].value),
 
-    # load SP table
-    if data_table["sp"] is None or data_table["job_class"] != job_class:
-        response = requests.get(prefix_url + f"data/jobs/{parent_direcoty}{job_class}/sp.json", headers=headers)
-        if response.status_code == 200:
-            data_table["sp"] = response.json()
-        else:
-            data_table["sp"] = {}
+            "pow": int(dom_elements["pow"]["base"].value),
+            "sta": int(dom_elements["sta"]["base"].value),
+            "wis": int(dom_elements["wis"]["base"].value),
+            "spl": int(dom_elements["spl"]["base"].value),
+            "con": int(dom_elements["con"]["base"].value),
+            "crt": int(dom_elements["crt"]["base"].value),
 
-    # load weapon type table
-    if data_table["weapon_type"] is None or data_table["job_class"] != job_class:
-        response = requests.get(prefix_url + f"data/jobs/{parent_direcoty}{job_class}/weapon_type.json", headers=headers)
-        if response.status_code == 200:
-            data_table["weapon_type"] = response.json()
-        else:
-            data_table["weapon_type"] = {}
+            "pow_bonus": int(dom_elements["pow"]["bonus"].value),
+            "sta_bonus": int(dom_elements["sta"]["bonus"].value),
+            "wis_bonus": int(dom_elements["wis"]["bonus"].value),
+            "spl_bonus": int(dom_elements["spl"]["bonus"].value),
+            "con_bonus": int(dom_elements["con"]["bonus"].value),
+            "crt_bonus": int(dom_elements["crt"]["bonus"].value)
+        }
 
-        # Right : Main weapon type
-        child_nodes = dom_elements["select_weapon_type_right"].childNodes
-        for node in child_nodes:
-            dom_elements["select_weapon_type_right"].removeChild(node)
+        # 職業
+        job_class: str = str(self._dom_elements["job_class"].value).strip()
+        job_class_idx: int = None
+        parent_direcoty: str = ""
+        if "job_classes" in self._load_datas:
+            ids = [idx for idx, value in enumerate(self._load_datas["job_classes"]) if value["class"] == job_class]
+            if len(ids) > 0:
+                job_class_idx = ids[0]
+                if  "parent_directory" in self._load_datas["job_classes"][job_class_idx]:
+                    parent_direcoty = self._load_datas["job_classes"][job_class_idx]["parent_directory"] + "/"
 
-        if data_table["weapon_type"] is not None and "right" in data_table["weapon_type"]:
-            for key in data_table["weapon_type"]["right"]:
-                data = data_table["weapon_type"]["right"][key]
-                child_class = document.createElement("option")
-                child_class.value = key
-                if "display_name" in data:
-                    child_class.label = data["display_name"]
+        if job_class_idx is None:
+            # 正しいjobが選択されてない場合はreturn
+            print("[WARNING]", f"Invalid job class: {job_class}")
+            return
 
-                dom_elements["select_weapon_type_right"].appendChild(child_class)
-
-        # Left : Sub weapon type
-        child_nodes = dom_elements["select_weapon_type_left"].childNodes
-        for node in child_nodes:
-            dom_elements["select_weapon_type_left"].removeChild(node)
-
-        if data_table["weapon_type"] is not None and "left" in data_table["weapon_type"]:
-            if len(data_table["weapon_type"]["left"]) == 0:
-                dom_elements["select_weapon_type_left"].disabled = True
+        # load HP table
+        if self._load_datas["hp"] is None or self._job_class_idx != job_class_idx:
+            response = requests.get(prefix_url + f"data/jobs/{parent_direcoty}{job_class}/hp.json", headers=self._headers)
+            if response.status_code == 200:
+                self._load_datas["hp"] = response.json()
             else:
-                dom_elements["select_weapon_type_left"].disabled = False
+                print("[WARNING]", "Get failed", "hp.json", response.status_code)
+                self._load_datas["hp"] = {}
 
-            for key in data_table["weapon_type"]["left"]:
-                data = data_table["weapon_type"]["left"][key]
-                child_class = document.createElement("option")
-                child_class.value = key
-                if "display_name" in data:
-                    child_class.label = data["display_name"]
+        # load SP table
+        if self._load_datas["sp"] is None or self._job_class_idx != job_class_idx:
+            response = requests.get(prefix_url + f"data/jobs/{parent_direcoty}{job_class}/sp.json", headers=self._headers)
+            if response.status_code == 200:
+                self._load_datas["sp"] = response.json()
+            else:
+                print("[WARNING]", "Get failed", "sp.json", response.status_code)
+                self._load_datas["sp"] = {}
 
-                dom_elements["select_weapon_type_left"].appendChild(child_class)
+        # load weapon type table
+        if self._load_datas["weapon_type"] is None or self._job_class_idx != job_class_idx:
+            response = requests.get(prefix_url + f"data/jobs/{parent_direcoty}{job_class}/weapon_type.json", headers=self._headers)
+            if response.status_code == 200:
+                self._load_datas["weapon_type"] = response.json()
+            else:
+                print("[WARNING]", "Get failed", "weapon_type.json", response.status_code)
+                self._load_datas["weapon_type"] = {}
 
-    # 読み込んだtableのjob_classを記録しておく
-    data_table["job_class"] = job_class
+        # 次回以降の処理のため記録
+        self._job_class_name = job_class
+        self._job_class_idx = job_class_idx
+        self._valid = True
 
-    # Max HP
-    hp_base_point: int = 0
-    if "additional_info" in load_datas and "hp_base_point" in load_datas["additional_info"]:
-        hp_base_point = load_datas["additional_info"]["hp_base_point"]
-    else:
-        hp_base_point = int(data_table["hp"][str(point["base_lv"])])
-    status_hp_max = int(hp_base_point + (hp_base_point * (point["vit"] + point["vit_bonus"]) / 100))
-    dom_elements["hp_max"].value = status_hp_max
+    def pre_calc(self) -> None:
+        if self.is_valid() != True:
+            return
 
-    # HP Recovery
+        # Max HP
+        hp_base_point: int = 0
+        if "additional_info" in self._load_datas and "hp_base_point" in self._load_datas["additional_info"]:
+            hp_base_point = self._load_datas["additional_info"]["hp_base_point"]
+        else:
+            hp_base_point = int(self._load_datas["hp"][str(self._point["base_lv"])])
+        status_hp_max = int(hp_base_point + (hp_base_point * (self._point["vit"] + self._point["vit_bonus"]) / 100))
+        self._dom_elements["hp_max"].value = status_hp_max
 
-    # Max SP
-    sp_base_point: int = 0
-    if "additional_info" in load_datas and "sp_base_point" in load_datas["additional_info"]:
-        sp_base_point = load_datas["additional_info"]["sp_base_point"]
-    else:
-        sp_base_point = int(data_table["sp"][str(point["base_lv"])])
-    status_sp_max = int(sp_base_point + (sp_base_point * (point["int"] + point["int_bonus"]) / 100))
-    dom_elements["sp_max"].value = status_sp_max
+        # HP Recovery
 
-    # SP Recovery
+        # Max SP
+        sp_base_point: int = 0
+        if "additional_info" in self._load_datas and "sp_base_point" in self._load_datas["additional_info"]:
+            sp_base_point = self._load_datas["additional_info"]["sp_base_point"]
+        else:
+            sp_base_point = int(self._load_datas["sp"][str(self._point["base_lv"])])
+        status_sp_max = int(sp_base_point + (sp_base_point * (self._point["int"] + self._point["int_bonus"]) / 100))
+        self._dom_elements["sp_max"].value = status_sp_max
 
-    # Atk(not bow)
-    status_atk = int((point["str"] + point["str_bonus"])
-            + (point["dex"] + point["dex_bonus"]) * 0.2
-            + (point["luk"] + point["luk_bonus"]) * 0.3
-            )
-    dom_elements["atk"]["base"].value = status_atk
+        # SP Recovery
 
-    # Def
-    status_def_base = int(point["base_lv"] * 0.5
-                        + (point["agi"] + point["agi_bonus"]) * 0.2
-                        + (point["vit"] + point["vit_bonus"]) * 0.5
-                        )
-    dom_elements["def"]["base"].value = status_def_base
+        # Atk(not bow)
+        status_atk = int((self._point["str"] + self._point["str_bonus"])
+                + (self._point["dex"] + self._point["dex_bonus"]) * 0.2
+                + (self._point["luk"] + self._point["luk_bonus"]) * 0.3
+                )
+        self._dom_elements["atk"]["base"].value = status_atk
 
-    # Matk
-    status_matk_base = int((point["int"] + point["int_bonus"])
-                            + (point["dex"] + point["dex_bonus"]) * 0.2
-                            + (point["luk"] + point["luk_bonus"]) * 0.3
+        # Def
+        status_def_base = int(self._point["base_lv"] * 0.5
+                            + (self._point["agi"] + self._point["agi_bonus"]) * 0.2
+                            + (self._point["vit"] + self._point["vit_bonus"]) * 0.5
                             )
-    dom_elements["matk"]["base"].value = status_matk_base
+        self._dom_elements["def"]["base"].value = status_def_base
 
-    # Mdef
-    status_mdef_base = int(point["base_lv"] * 0.2
-                            + (point["int"] + point["int_bonus"])
-                            + (point["vit"] + point["vit_bonus"]) * 0.2
-                            + (point["dex"] + point["dex_bonus"]) * 0.2
+        # Matk
+        status_matk_base = int((self._point["int"] + self._point["int_bonus"])
+                                + (self._point["dex"] + self._point["dex_bonus"]) * 0.2
+                                + (self._point["luk"] + self._point["luk_bonus"]) * 0.3
+                                )
+        self._dom_elements["matk"]["base"].value = status_matk_base
+
+        # Mdef
+        status_mdef_base = int(self._point["base_lv"] * 0.2
+                                + (self._point["int"] + self._point["int_bonus"])
+                                + (self._point["vit"] + self._point["vit_bonus"]) * 0.2
+                                + (self._point["dex"] + self._point["dex_bonus"]) * 0.2
+                                )
+        self._dom_elements["mdef"]["base"].value = status_mdef_base
+
+        # Hit
+        status_hit = int(175 + self._point["base_lv"]
+                            + (self._point["dex"] + self._point["dex_bonus"])
+                            + (self._point["luk"] + self._point["luk_bonus"]) * 0.3
                             )
-    dom_elements["mdef"]["base"].value = status_mdef_base
+        self._dom_elements["hit"].value = status_hit
 
-    # Hit
-    status_hit = int(175 + point["base_lv"]
-                        + (point["dex"] + point["dex_bonus"])
-                        + (point["luk"] + point["luk_bonus"]) * 0.3
-                        )
-    dom_elements["hit"].value = status_hit
+        # Flee
+        status_flee = int(100 + self._point["base_lv"]
+                            + (self._point["agi"] + self._point["agi_bonus"])
+                            + (self._point["luk"] + self._point["luk_bonus"]) * 0.2
+                            )
+        self._dom_elements["flee"].value = status_flee
 
-    # Flee
-    status_flee = int(100 + point["base_lv"]
-                        + (point["agi"] + point["agi_bonus"])
-                        + (point["luk"] + point["luk_bonus"]) * 0.2
-                        )
-    dom_elements["flee"].value = status_flee
+        # 完全回避 : Complete avoidance
+        status_complete_avoidance = 1 + int(((self._point["luk"] + self._point["luk_bonus"]) *0.1)*10)/10
+        self._dom_elements["complete_avoidance"].value = status_complete_avoidance
 
-    # 完全回避 : Complete avoidance
-    status_complete_avoidance = 1 + int(((point["luk"] + point["luk_bonus"]) *0.1)*10)/10
-    dom_elements["complete_avoidance"].value = status_complete_avoidance
+        # Critical
+        status_critical = int((1 + ((self._point["luk"] + self._point["luk_bonus"]) *0.3))*10)/10
+        self._dom_elements["critical"].value = status_critical
 
-    # Critical
-    status_critical = int((1 + ((point["luk"] + point["luk_bonus"]) *0.3))*10)/10
-    dom_elements["critical"].value = status_critical
-
-    # Aspd(hand)
-    aspd_base_point: int = 152
-    aspd_penalty: float = (aspd_base_point - 144) / 50
-    shield_correction_point: float = 0 #盾があれば-7～
-    on_horseback_point: float = 1 #未騎乗
-    #on_horseback_point: float = 0.5 + on_horseback_skill_lv * 0.1 #騎乗時
-    status_aspd = int((aspd_base_point
-                        + (math.sqrt(((point["agi"] + point["agi_bonus"]) * 3027 / 300)
-                        + ((point["dex"] + point["dex_bonus"]) * 55 / 300)) * (1 - aspd_penalty)) + shield_correction_point) * on_horseback_point * 10)/10
-    dom_elements["aspd"].value = status_aspd
+        # Aspd(hand)
+        aspd_base_point: int = 152
+        aspd_penalty: float = (aspd_base_point - 144) / 50
+        shield_correction_point: float = 0 #盾があれば-7～
+        on_horseback_point: float = 1 #未騎乗
+        #on_horseback_point: float = 0.5 + on_horseback_skill_lv * 0.1 #騎乗時
+        status_aspd = int((aspd_base_point
+                            + (math.sqrt(((self._point["agi"] + self._point["agi_bonus"]) * 3027 / 300)
+                            + ((self._point["dex"] + self._point["dex_bonus"]) * 55 / 300)) * (1 - aspd_penalty)) + shield_correction_point) * on_horseback_point * 10)/10
+        self._dom_elements["aspd"].value = status_aspd
