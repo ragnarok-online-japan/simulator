@@ -668,24 +668,24 @@ class Simulator:
 
                 maximum = job_data["base_lv_max"]
                 self.dom_elements["base_lv"].max = maximum
-                if int(self.dom_elements["base_lv"].max) > maximum:
+                if int(self.dom_elements["base_lv"].value) > maximum:
                     self.dom_elements["base_lv"].value = maximum
 
                 maximum = job_data["job_lv_max"]
                 self.dom_elements["job_lv"].max = maximum
-                if int(self.dom_elements["job_lv"].max) > maximum:
+                if int(self.dom_elements["job_lv"].value) > maximum:
                     self.dom_elements["job_lv"].value = maximum
 
                 maximum = job_data["base_point_max"]
                 for key in self._status_primary.keys():
                     self.dom_elements[key]["base"].max = maximum
-                    if int(self.dom_elements[key]["base"].max) > maximum:
+                    if int(self.dom_elements[key]["base"].value) > maximum:
                         self.dom_elements[key]["base"].value = maximum
 
                 maximum = job_data["talent_point_max"]
                 for key in self._status_talent.keys():
                     self.dom_elements[key]["base"].max = maximum
-                    if int(self.dom_elements[key]["base"].max) > maximum:
+                    if int(self.dom_elements[key]["base"].value) > maximum:
                         self.dom_elements[key]["base"].value = maximum
 
                 # 計算前の準備
