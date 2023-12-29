@@ -158,7 +158,7 @@ class Simulator:
                 self.dom_elements[key] = document.getElementById(f"status_{key}")
 
         # スキル
-        self.dom_elements["collapse_skill"] = document.getElementById("collapse_skill")
+        self.dom_elements["div_skills"] = document.getElementById("div_skills")
         self.dom_elements["skills"]: dict = {}
         self.dom_elements["skill_lv"]: dict = {}
         self.dom_elements["skill_enable"]: dict = {}
@@ -440,7 +440,7 @@ class Simulator:
                 div_col4.setAttribute("class", "col-md-4")
                 div_row.appendChild(div_col4)
 
-                self.dom_elements["collapse_skill"].firstElementChild.appendChild(div_row)
+                self.dom_elements["div_skills"].appendChild(div_row)
 
                 self.dom_elements["skills"][key] = div_row
                 self.dom_elements["skill_lv"][key] = skill_lv
