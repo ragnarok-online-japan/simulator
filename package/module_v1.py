@@ -6,8 +6,7 @@ from pyscript import document
 from .abstract_module import AbstractCalculationModule
 
 class CalculationModule(AbstractCalculationModule):
-    _in_memory: dict = {
-    }
+    _in_memory: dict = {}
 
     def __init__(self, prefix_url: str, dom_elements: dict[str], load_datas: dict[str]) -> None:
         # init
@@ -184,3 +183,6 @@ class CalculationModule(AbstractCalculationModule):
                             + (math.sqrt(((self._point["agi"] + self._point["agi_bonus"]) * 3027 / 300)
                             + ((self._point["dex"] + self._point["dex_bonus"]) * 55 / 300)) * (1 - aspd_penalty)) + shield_correction_point) * on_horseback_point * 10)/10
         self._dom_elements["aspd"].value = status_aspd
+
+    def calculation(self) -> None:
+        pass

@@ -688,7 +688,11 @@ class Simulator:
                     if int(self.dom_elements[key]["base"].max) > maximum:
                         self.dom_elements[key]["base"].value = maximum
 
+                # 計算前の準備
                 self._calculation_module.pre_calc()
+
+                # 計算
+                self._calculation_module.calculation()
 
         except Exception as ex:
             success = False

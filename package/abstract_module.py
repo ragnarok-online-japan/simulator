@@ -25,5 +25,13 @@ class AbstractCalculationModule(ABC):
         return self._job_class_idx
 
     @abstractmethod
-    def pre_calc(self, prefix_url: str, dom_elements: dict[str], load_datas: dict[str]) -> None:
+    def __init__(self, prefix_url: str, dom_elements: dict[str], load_datas: dict[str]) -> None:
+        pass
+
+    @abstractmethod
+    def pre_calc(self) -> None:
+        pass
+
+    @abstractmethod
+    def calculation(self) -> None:
         pass
