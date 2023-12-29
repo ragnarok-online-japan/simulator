@@ -1,0 +1,29 @@
+{
+    "AC_CONCENTRATION": {
+        "buff": true
+    },
+    "AC_OWL": {
+        "buff": true
+    },
+    "AC_VULTURE": {
+        "buff": true
+    },
+    "HT_BEASTBANE": {
+        "buff": true
+    },
+    "HT_FALCON": {
+        "buff": true
+    },
+    "HT_STEELCROW": {
+        "buff": true
+    },
+    "RA_RANGERMAIN": {
+        "buff": true
+    },
+    "RA_RESEARCHTRAP": {
+        "buff": true
+    },
+    "RA_TOOTHOFWUG": {
+        "buff": true
+    }
+}
