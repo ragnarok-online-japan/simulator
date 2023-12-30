@@ -22,7 +22,7 @@ class Simulator:
     _initialized: bool = False
     _export_json_format_version: int = 1
     _prefix_url: str = "/"
-    _suffix_url: str = f"v{_export_json_format_version}.html"
+    _suffix_url: str = f"v1.html"
 
     _calculation_module: CalculationModule = None
     _job_class_name: str = None
