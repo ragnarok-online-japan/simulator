@@ -20,8 +20,14 @@
     font-family: "melete-regular";
 }
 
+input,
+select,
 textarea {
     font-family: "Source Han Code JP", monospace;
+}
+
+input.refining {
+    width: 4em;
 }
 
 dialog {

@@ -234,6 +234,80 @@ class Simulator:
 
                 datalist_skill.appendChild(option)
 
+        # アイテム
+        response = requests.get(self._prefix_url + f"data/items.json", headers=self.headers)
+        if response.status_code == 200:
+            self.load_datas["items"] = response.json()
+
+        if len(self.load_datas["items"]) > 0:
+            datalist_equipment_weapon = document.getElementById("datalist_equipment_weapon")
+            datalist_equipment_headgear_top = document.getElementById("datalist_equipment_headgear_top")
+            datalist_equipment_headgear_center = document.getElementById("datalist_equipment_headgear_center")
+            datalist_equipment_headgear_lower = document.getElementById("datalist_equipment_headgear_lower")
+            datalist_equipment_shield = document.getElementById("datalist_equipment_shield")
+            datalist_equipment_armour = document.getElementById("datalist_equipment_armour")
+            datalist_equipment_shoulder = document.getElementById("datalist_equipment_shoulder")
+            datalist_equipment_footwear = document.getElementById("datalist_equipment_footwear")
+            datalist_equipment_accessory1 = document.getElementById("datalist_equipment_accessory1")
+            datalist_equipment_accessory2 = document.getElementById("datalist_equipment_accessory2")
+
+            response = requests.get(self._prefix_url + f"data/items_update.json", headers=self.headers)
+            if response.status_code == 200:
+                items_update = response.json()
+                for key in items_update.keys():
+                    if key in self.load_datas["items"]:
+                        skill: dict = self.load_datas["items"][key]
+                        skill.update(items_update[key])
+
+            for idx, item in self.load_datas["items"].items():
+                if "displayname" not in item or "type" not in item:
+                    continue
+
+                item_name = item["displayname"]
+                if "slot" in item:
+                    item_name = "{:s}[{:d}]".format(item_name, item["slot"])
+
+                option = document.createElement("option")
+                option.value = item_name
+                option.setAttribute("data-item-id", idx)
+
+                if item["type"] == "兜":
+                    if "position" not in item:
+                        pass
+                    elif item["position"] == "上段":
+                        datalist_equipment_headgear_top.appendChild(option)
+                    elif item["position"] == "中段":
+                        datalist_equipment_headgear_center.appendChild(option)
+                    elif item["position"] == "下段":
+                        datalist_equipment_headgear_lower.appendChild(option)
+                    elif item["position"] == "上中下段":
+                        datalist_equipment_headgear_top.appendChild(option)
+                    elif item["position"] == "上下段":
+                        datalist_equipment_headgear_top.appendChild(option)
+
+                elif item["type"] == "盾":
+                    datalist_equipment_shield.appendChild(option)
+
+                elif item["type"] == "鎧":
+                    datalist_equipment_armour.appendChild(option)
+
+                elif item["type"] == "肩にかける物":
+                    datalist_equipment_shoulder.appendChild(option)
+
+                elif item["type"] == "靴":
+                    datalist_equipment_footwear.appendChild(option)
+
+                elif item["type"] == "アクセサリー":
+                    datalist_equipment_accessory1.appendChild(option)
+                    option = option.cloneNode(True)
+                    datalist_equipment_accessory2.appendChild(option)
+
+                elif item["type"] == "アクセサリー(1)":
+                    datalist_equipment_accessory1.appendChild(option)
+
+                elif item["type"] == "アクセサリー(2)":
+                    datalist_equipment_accessory2.appendChild(option)
+
         # セーブ/ロード
         div_save_load = document.getElementById("div_save_load")
         alert_unavailable_save_load = document.getElementById("alert_unavailable_save_load")
