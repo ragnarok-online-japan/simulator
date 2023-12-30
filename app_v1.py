@@ -401,15 +401,18 @@ class Simulator:
                         pass
 
     def onclick_skill_append(self, event = None) -> None:
-        input_value: str = self.dom_elements["input_skill"].value
-        if input_value in self.dom_elements["skills"]:
+        skill_id: str = self.dom_elements["input_skill"].value
+        if skill_id in self.dom_elements["skills"]:
             # 追加済み
             pass
-        elif input_value in self.load_datas["skill_list"]:
+        elif skill_id in self.load_datas["skill_list"]:
             data = {}
-            self.append_skill_row(input_value, data)
+            self.append_skill_row(skill_id, data)
 
         self.dom_elements["input_skill"].value = ""
+
+        self.calculation()
+        self.draw_img_status_window()
 
     def append_skill_row(self, skill_id: str, data: dict) -> None:
         if skill_id not in self.load_datas["skill_list"]:
@@ -506,16 +509,19 @@ class Simulator:
         if event is None:
             return
 
-        key = event.target.getAttribute("data-skill-id")
+        skill_id: str = event.target.getAttribute("data-skill-id")
 
         # スキル
-        self.dom_elements["skill_lv"][key].remove()
-        del self.dom_elements["skill_lv"][key]
-        if key in self.dom_elements["skill_enable"]:
-            self.dom_elements["skill_enable"][key].remove()
-            del self.dom_elements["skill_enable"][key]
-        self.dom_elements["skills"][key].remove()
-        del self.dom_elements["skills"][key]
+        self.dom_elements["skill_lv"][skill_id].remove()
+        del self.dom_elements["skill_lv"][skill_id]
+        if skill_id in self.dom_elements["skill_enable"]:
+            self.dom_elements["skill_enable"][skill_id].remove()
+            del self.dom_elements["skill_enable"][skill_id]
+        self.dom_elements["skills"][skill_id].remove()
+        del self.dom_elements["skills"][skill_id]
+
+        self.calculation()
+        self.draw_img_status_window()
 
     def import_from_base64(self, data_base64: str) -> bool:
         success: bool = False
