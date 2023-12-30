@@ -158,12 +158,6 @@ class Simulator:
             else:
                 self.dom_elements[key] = document.getElementById(f"status_{key}")
 
-        # スキル
-        self.dom_elements["div_skills"] = document.getElementById("div_skills")
-        self.dom_elements["skills"]: dict = {}
-        self.dom_elements["skill_lv"]: dict = {}
-        self.dom_elements["skill_enable"]: dict = {}
-
         # 武器タイプ
         self.dom_elements["select_weapon_type_right"] = document.getElementById("select_weapon_type_right")
         self.dom_elements["select_weapon_type_left"]  = document.getElementById("select_weapon_type_left")
@@ -205,18 +199,40 @@ class Simulator:
 
             self.dom_elements["job_class"].value = "novice"
 
+        # スキル
+        self.dom_elements["div_skills"] = document.getElementById("div_skills")
+        self.dom_elements["skills"]: dict = {}
+        self.dom_elements["skill_lv"]: dict = {}
+        self.dom_elements["skill_enable"]: dict = {}
+
         response = requests.get(self._prefix_url + f"data/skill_list.json", headers=self.headers)
         if response.status_code == 200:
             self.load_datas["skill_list"] = response.json()
 
-        response = requests.get(self._prefix_url + f"data/skill_list_update.json", headers=self.headers)
-        if response.status_code == 200:
-            skill_list_update = response.json()
-            for key in skill_list_update.keys():
-                if key in self.load_datas["skill_list"]:
-                    skill: dict = self.load_datas["skill_list"][key]
-                    skill.update(skill_list_update[key])
+        if len(self.load_datas["skill_list"]) > 0:
+            response = requests.get(self._prefix_url + f"data/skill_list_update.json", headers=self.headers)
+            if response.status_code == 200:
+                skill_list_update = response.json()
+                for key in skill_list_update.keys():
+                    if key in self.load_datas["skill_list"]:
+                        skill: dict = self.load_datas["skill_list"][key]
+                        skill.update(skill_list_update[key])
 
+            self.dom_elements["input_skill"] = document.getElementById("input_skill")
+            button_skill_append = document.getElementById("button_skill_append")
+            button_skill_append.onclick = self.onclick_skill_append
+
+            datalist_skill = document.getElementById("datalist_skill")
+            for idx, data in self.load_datas["skill_list"].items():
+                if "name" not in data:
+                    continue
+                option = document.createElement("option")
+                option.value = idx
+                option.label= data["name"]
+
+                datalist_skill.appendChild(option)
+
+        # セーブ/ロード
         div_save_load = document.getElementById("div_save_load")
         alert_unavailable_save_load = document.getElementById("alert_unavailable_save_load")
         if window.localStorage:
@@ -384,13 +400,24 @@ class Simulator:
                     except ValueError:
                         pass
 
+    def onclick_skill_append(self, event = None) -> None:
+        input_value: str = self.dom_elements["input_skill"].value
+        if input_value in self.dom_elements["skills"]:
+            # 追加済み
+            pass
+        elif input_value in self.load_datas["skill_list"]:
+            data = {}
+            self.append_skill_row(input_value, data)
+
+        self.dom_elements["input_skill"].value = ""
+
     def append_skill_row(self, skill_id: str, data: dict) -> None:
         if skill_id not in self.load_datas["skill_list"]:
             print("[WARNING]", f"Unknown skill: {skill_id}")
             return
 
         if "lv" not in data:
-            return
+            data["lv"] = 0
 
         lv: int = 0
         try:
@@ -483,9 +510,12 @@ class Simulator:
 
         # スキル
         self.dom_elements["skill_lv"][key].remove()
+        del self.dom_elements["skill_lv"][key]
         if key in self.dom_elements["skill_enable"]:
             self.dom_elements["skill_enable"][key].remove()
+            del self.dom_elements["skill_enable"][key]
         self.dom_elements["skills"][key].remove()
+        del self.dom_elements["skills"][key]
 
     def import_from_base64(self, data_base64: str) -> bool:
         success: bool = False
