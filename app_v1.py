@@ -226,6 +226,8 @@ class Simulator:
             for idx, data in self.load_datas["skill_list"].items():
                 if "name" not in data:
                     continue
+                if data["name"] == "Unknown-Skill":
+                    continue
                 option = document.createElement("option")
                 option.value = idx
                 option.label= data["name"]
