@@ -29,11 +29,11 @@ class Simulator:
 
     dom_elements: dict[str] = {}
     load_datas: dict[str] = {
-        "job_classese": None,
         "hp": None,
+        "job_classese": None,
+        "skill_list": {},
         "sp": None,
         "weapon_type": None,
-        "skill_list": {}
     }
 
     _status_primary: dict = {
