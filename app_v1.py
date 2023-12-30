@@ -32,7 +32,8 @@ class Simulator:
         "job_classese": None,
         "hp": None,
         "sp": None,
-        "weapon_type": None
+        "weapon_type": None,
+        "skill_list": {}
     }
 
     _status_primary: dict = {
@@ -189,12 +190,7 @@ class Simulator:
         self.dom_elements["button_reset_data"].onclick = self.onclick_reset_data
 
         # 職業情報
-        headers={
-            "Content-Type": "application/json",
-            "Accept-Encoding": None, # delete unsafe header
-            "Connection": None # delete unsafe haader
-        }
-        response = requests.get(prefix_url + "data/job_classes.json", headers=headers)
+        response = requests.get(prefix_url + "data/job_classes.json", headers=self.headers)
         self.load_datas["job_classes"]: list = response.json()
 
         if len(self.load_datas["job_classes"]) > 0:
@@ -208,6 +204,18 @@ class Simulator:
                 datalist_job_classes.appendChild(option)
 
             self.dom_elements["job_class"].value = "novice"
+
+        response = requests.get(self._prefix_url + f"data/skill_list.json", headers=self.headers)
+        if response.status_code == 200:
+            self.load_datas["skill_list"] = response.json()
+
+        response = requests.get(self._prefix_url + f"data/skill_list_update.json", headers=self.headers)
+        if response.status_code == 200:
+            skill_list_update = response.json()
+            for key in skill_list_update.keys():
+                if key in self.load_datas["skill_list"]:
+                    skill: dict = self.load_datas["skill_list"][key]
+                    skill.update(skill_list_update[key])
 
         div_save_load = document.getElementById("div_save_load")
         alert_unavailable_save_load = document.getElementById("alert_unavailable_save_load")
@@ -351,101 +359,8 @@ class Simulator:
                     self.dom_elements[key]["base"].value = data_dict["status"][key]
 
         if "skills" in data_dict:
-            skill_list: dict = {}
-            response = requests.get(self._prefix_url + f"data/skill_list.json", headers=self.headers)
-            if response.status_code == 200:
-                skill_list = response.json()
-
-            response = requests.get(self._prefix_url + f"data/skill_list_update.json", headers=self.headers)
-            if response.status_code == 200:
-                skill_list_update = response.json()
-                for key in skill_list_update.keys():
-                    if key in skill_list:
-                        skill: dict = skill_list[key]
-                        skill.update(skill_list_update[key])
-
             for key in data_dict["skills"].keys():
-                if key not in skill_list:
-                    print("[WARNING]", f"Unknown skill: {key}")
-                    continue
-
-                if "lv" not in data_dict["skills"][key]:
-                    continue
-
-                lv: int = 0
-                try:
-                    lv = int(data_dict["skills"][key]["lv"])
-                except ValueError:
-                    pass
-
-                skill_name: str = skill_list[key]["name"]
-                max_lv: int = skill_list[key]["max_lv"]
-                buff: bool = False
-                if "buff" in skill_list[key] and skill_list[key]["buff"] == True:
-                    buff = True
-
-                div_row = document.createElement("div")
-                div_row.setAttribute("id", f"skill.{key}")
-                div_row.setAttribute("class", "row border border-secondary rounded")
-
-                div_col1 = document.createElement("div")
-                div_col1.setAttribute("class", "col-md-4")
-                div_row.appendChild(div_col1)
-
-                skill_label = document.createElement("label")
-                skill_label.setAttribute("class", "form-label")
-                skill_label.setAttribute("for", f"skill_lv.{key}")
-                skill_label.innerText = skill_name
-                div_col1.appendChild(skill_label)
-
-                div_col2 = document.createElement("div")
-                div_col2.setAttribute("class", "col-md-2")
-                div_col2.innerText = "Lv:"
-                div_row.appendChild(div_col2)
-
-                skill_lv = document.createElement("input")
-                skill_lv.setAttribute("id", f"skill_lv.{key}")
-                skill_lv.setAttribute("class", "form-control")
-                skill_lv.setAttribute("type", "number")
-                skill_lv.setAttribute("name", key)
-                skill_lv.setAttribute("min", 0)
-                skill_lv.setAttribute("max", max_lv)
-                skill_lv.setAttribute("value", lv)
-                skill_lv.setAttribute("class", "form-number")
-                div_col2.appendChild(skill_lv)
-
-                div_col3 = document.createElement("div")
-                div_col3.setAttribute("class", "col-md-2")
-                div_row.appendChild(div_col3)
-
-                skill_enable = None
-                if buff == True:
-                    skill_enabled_label = document.createElement("label")
-                    skill_enabled_label.setAttribute("for", f"skill_enable.{key}")
-                    skill_enabled_label.innerText = "Enable:"
-                    div_col3.appendChild(skill_enabled_label)
-
-                    skill_enable = document.createElement("input")
-                    skill_enable.setAttribute("id", f"skill_enable.{key}")
-                    skill_enable.setAttribute("class", "form-check-input")
-                    skill_enable.setAttribute("type", "checkbox")
-                    skill_enable.setAttribute("name", key)
-                    if "enable" in data_dict["skills"][key] and data_dict["skills"][key]["enable"] == False:
-                        skill_enable.setAttribute("checked", "")
-                    elif lv > 0:
-                        skill_enable.setAttribute("checked", "checked")
-                    div_col3.appendChild(skill_enable)
-
-                div_col4 = document.createElement("div")
-                div_col4.setAttribute("class", "col-md-4")
-                div_row.appendChild(div_col4)
-
-                self.dom_elements["div_skills"].appendChild(div_row)
-
-                self.dom_elements["skills"][key] = div_row
-                self.dom_elements["skill_lv"][key] = skill_lv
-                if skill_enable is not None:
-                    self.dom_elements["skill_enable"][key] = skill_enable
+                self.append_skill_row(key, data_dict["skills"][key])
 
         if "equipments" in data_dict:
             pass
@@ -468,6 +383,109 @@ class Simulator:
                         self.load_datas["additional_info"]["sp_base_point"] = int(data_dict["additional_info"]["sp_base_point"])
                     except ValueError:
                         pass
+
+    def append_skill_row(self, skill_id: str, data: dict) -> None:
+        if skill_id not in self.load_datas["skill_list"]:
+            print("[WARNING]", f"Unknown skill: {skill_id}")
+            return
+
+        if "lv" not in data:
+            return
+
+        lv: int = 0
+        try:
+            lv = int(data["lv"])
+        except ValueError:
+            pass
+
+        skill_name: str = self.load_datas["skill_list"][skill_id]["name"]
+        max_lv: int = self.load_datas["skill_list"][skill_id]["max_lv"]
+        buff: bool = False
+        if "buff" in self.load_datas["skill_list"][skill_id] and self.load_datas["skill_list"][skill_id]["buff"] == True:
+            buff = True
+
+        div_row = document.createElement("div")
+        div_row.setAttribute("id", f"skill.{skill_id}")
+        div_row.setAttribute("class", "row border border-secondary rounded")
+
+        div_col1 = document.createElement("div")
+        div_col1.setAttribute("class", "col-md-4")
+        div_row.appendChild(div_col1)
+
+        skill_label = document.createElement("label")
+        skill_label.setAttribute("class", "form-label")
+        skill_label.setAttribute("for", f"skill_lv.{skill_id}")
+        skill_label.innerText = skill_name
+        div_col1.appendChild(skill_label)
+
+        div_col2 = document.createElement("div")
+        div_col2.setAttribute("class", "col-md-2")
+        div_col2.innerText = "Lv:"
+        div_row.appendChild(div_col2)
+
+        skill_lv = document.createElement("input")
+        skill_lv.setAttribute("id", f"skill_lv.{skill_id}")
+        skill_lv.setAttribute("class", "form-control")
+        skill_lv.setAttribute("type", "number")
+        skill_lv.setAttribute("name", skill_id)
+        skill_lv.setAttribute("min", 0)
+        skill_lv.setAttribute("max", max_lv)
+        skill_lv.setAttribute("value", lv)
+        skill_lv.setAttribute("class", "form-number")
+        div_col2.appendChild(skill_lv)
+
+        div_col3 = document.createElement("div")
+        div_col3.setAttribute("class", "col-md-2")
+        div_row.appendChild(div_col3)
+
+        skill_enable = None
+        if buff == True:
+            skill_enabled_label = document.createElement("label")
+            skill_enabled_label.setAttribute("for", f"skill_enable.{skill_id}")
+            skill_enabled_label.innerText = "Enable:"
+            div_col3.appendChild(skill_enabled_label)
+
+            skill_enable = document.createElement("input")
+            skill_enable.setAttribute("id", f"skill_enable.{skill_id}")
+            skill_enable.setAttribute("class", "form-check-input")
+            skill_enable.setAttribute("type", "checkbox")
+            skill_enable.setAttribute("name", skill_id)
+            if "enable" in data and data["enable"] == False:
+                skill_enable.setAttribute("checked", "")
+            elif lv > 0:
+                skill_enable.setAttribute("checked", "checked")
+            div_col3.appendChild(skill_enable)
+
+        div_col4 = document.createElement("div")
+        div_col4.setAttribute("class", "col-md-4")
+        div_row.appendChild(div_col4)
+
+        skill_remove = document.createElement("button")
+        skill_remove.setAttribute("type", "button")
+        skill_remove.setAttribute("class", "btn-close")
+        skill_remove.setAttribute("arial-label", "Remove")
+        skill_remove.setAttribute("data-skill-id", skill_id)
+        skill_remove.onclick = self.onclick_skill_remove
+        div_col4.appendChild(skill_remove)
+
+        self.dom_elements["div_skills"].appendChild(div_row)
+
+        self.dom_elements["skills"][skill_id] = div_row
+        self.dom_elements["skill_lv"][skill_id] = skill_lv
+        if skill_enable is not None:
+            self.dom_elements["skill_enable"][skill_id] = skill_enable
+
+    def onclick_skill_remove(self, event = None) -> None:
+        if event is None:
+            return
+
+        key = event.target.getAttribute("data-skill-id")
+
+        # スキル
+        self.dom_elements["skill_lv"][key].remove()
+        if key in self.dom_elements["skill_enable"]:
+            self.dom_elements["skill_enable"][key].remove()
+        self.dom_elements["skills"][key].remove()
 
     def import_from_base64(self, data_base64: str) -> bool:
         success: bool = False
