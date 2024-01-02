@@ -113,7 +113,7 @@ class Simulator:
     headers={
         "Content-Type": "application/json",
         "Accept-Encoding": None, # delete unsafe header
-        "Connection": None # delete unsafe haader
+        "Connection": None # delete unsafe header
     }
 
     def __init__(self, prefix_url = "/", suffix_url="index.html") -> None:
@@ -169,8 +169,8 @@ class Simulator:
 
         self.dom_elements["textarea_import_json"] = document.getElementById("textarea_import_json")
 
-        self.dom_elements["daialog_button_close"] = document.getElementById("daialog_button_close")
-        self.dom_elements["daialog_button_close"].onclick = self.close_dialog
+        self.dom_elements["dialog_button_close"] = document.getElementById("dialog_button_close")
+        self.dom_elements["dialog_button_close"].onclick = self.close_dialog
 
         self.dom_elements["img_status_window"] = document.getElementById("img_status_window")
 
@@ -919,12 +919,12 @@ class Simulator:
         message_div = document.getElementById("dialog_information_message_div")
         message_div.innerText = message
 
-        daialog = document.getElementById("daialog")
-        daialog.showModal()
+        dialog = document.getElementById("dialog")
+        dialog.showModal()
 
     def close_dialog(self, event = None) -> None:
-        daialog = document.getElementById("daialog")
-        daialog.close()
+        dialog = document.getElementById("dialog")
+        dialog.close()
 
 def main():
     query_strings = URLSearchParams.new(location.search)
