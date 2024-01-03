@@ -9,6 +9,7 @@ import base64
 import binascii
 import bz2
 import json
+import msgpack
 import pyodide_http
 import requests
 import traceback
@@ -602,8 +603,9 @@ class Simulator:
     def import_from_base64(self, data_base64: str) -> bool:
         success: bool = False
         try:
-            data_compressed = binascii.a2b_base64(data_base64.encode("utf-8"))
-            data_json = bz2.decompress(data_compressed)
+            data_compressed: bytes = binascii.a2b_base64(data_base64.encode("utf-8"))
+            data_msgpack: bytes = bz2.decompress(data_compressed)
+            data_json: str = msgpack.unpackb(data_msgpack, use_list=True)
             self.dom_elements["textarea_import_json"].value = data_json.decode("utf-8")
             self.import_from_json(data_json.decode("utf-8"))
             success = True
@@ -687,8 +689,11 @@ class Simulator:
     def export_to_base64(self) -> None:
         data_json: str = self.export_to_json()
 
-        # json => bz2 copressed
-        data_compressed = bz2.compress(data_json.encode("utf-8"), compresslevel=9)
+        # json => msgpack
+        data_msgpack: bytes = msgpack.packb(data_json.encode("utf-8"), use_bin_type=True)
+
+        # msgpack => bz2 copressed
+        data_compressed: bytes = bz2.compress(data_msgpack, compresslevel=9)
 
         # bz2 compressed => base64
         data_base64 = binascii.b2a_base64(data_compressed).decode("utf-8")
@@ -935,7 +940,7 @@ def main():
     result_import: bool = None
     if str(query_strings) != "":
         data = str(query_strings)
-        data_base64 = urllib.parse.unquote(data)
+        data_base64: str = urllib.parse.unquote(data)
         result_import = instance.import_from_base64(data_base64)
 
     execute_calculation: bool = True
