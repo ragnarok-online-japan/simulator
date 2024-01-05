@@ -1,7 +1,6 @@
 import math
 
 import requests
-from pyscript import document
 
 from .abstract_module import AbstractCalculationModule
 
@@ -16,37 +15,25 @@ class CalculationModule(AbstractCalculationModule):
         self.dom_elements = dom_elements
         self.load_datas = load_datas
 
-        self._point: dict = {
-            "base_lv": int(dom_elements["base_lv"].value),
-            "job_lv": int(dom_elements["base_lv"].value),
-            "str": int(dom_elements["str"]["base"].value),
-            "agi": int(dom_elements["agi"]["base"].value),
-            "vit": int(dom_elements["vit"]["base"].value),
-            "int": int(dom_elements["int"]["base"].value),
-            "dex": int(dom_elements["dex"]["base"].value),
-            "luk": int(dom_elements["luk"]["base"].value),
+        try:
+            self.point: dict = {
+                "base_lv": int(dom_elements["base_lv"].value),
+                "job_lv": int(dom_elements["base_lv"].value)
+            }
 
-            "str_bonus": int(dom_elements["str"]["bonus"].value),
-            "agi_bonus": int(dom_elements["agi"]["bonus"].value),
-            "vit_bonus": int(dom_elements["vit"]["bonus"].value),
-            "int_bonus": int(dom_elements["int"]["bonus"].value),
-            "dex_bonus": int(dom_elements["dex"]["bonus"].value),
-            "luk_bonus": int(dom_elements["luk"]["bonus"].value),
+            for key in self.status_primary:
+                self.point[key] = {
+                    "base": int(dom_elements[key]["base"].value),
+                    "bonus": int(dom_elements[key]["bonus"].value)
+                }
 
-            "pow": int(dom_elements["pow"]["base"].value),
-            "sta": int(dom_elements["sta"]["base"].value),
-            "wis": int(dom_elements["wis"]["base"].value),
-            "spl": int(dom_elements["spl"]["base"].value),
-            "con": int(dom_elements["con"]["base"].value),
-            "crt": int(dom_elements["crt"]["base"].value),
-
-            "pow_bonus": int(dom_elements["pow"]["bonus"].value),
-            "sta_bonus": int(dom_elements["sta"]["bonus"].value),
-            "wis_bonus": int(dom_elements["wis"]["bonus"].value),
-            "spl_bonus": int(dom_elements["spl"]["bonus"].value),
-            "con_bonus": int(dom_elements["con"]["bonus"].value),
-            "crt_bonus": int(dom_elements["crt"]["bonus"].value)
-        }
+            for key in self.status_talent:
+                self.point[key] = {
+                    "base": int(dom_elements[key]["base"].value),
+                    "bonus": int(dom_elements[key]["bonus"].value)
+                }
+        except ValueError:
+            pass
 
         # 職業
         job_class: str = str(self.dom_elements["job_class"].value).strip()
@@ -100,13 +87,16 @@ class CalculationModule(AbstractCalculationModule):
         if self.is_valid() != True:
             return
 
+        # 装備, スキルなどの事前処理
+
+    def calculation(self) -> None:
         # Max HP
         hp_base_point: int = 0
         if "additional_info" in self.load_datas and "hp_base_point" in self.load_datas["additional_info"]:
             hp_base_point = self.load_datas["additional_info"]["hp_base_point"]
         else:
-            hp_base_point = int(self.load_datas["hp"][str(self._point["base_lv"])])
-        status_hp_max = int(hp_base_point + (hp_base_point * (self._point["vit"] + self._point["vit_bonus"]) / 100))
+            hp_base_point = int(self.load_datas["hp"][str(self.point["base_lv"])])
+        status_hp_max = int(hp_base_point + (hp_base_point * (self.point["vit"]["base"] + self.point["vit"]["bonus"]) / 100))
         self.dom_elements["hp_max"].value = status_hp_max
 
         # HP Recovery
@@ -116,61 +106,61 @@ class CalculationModule(AbstractCalculationModule):
         if "additional_info" in self.load_datas and "sp_base_point" in self.load_datas["additional_info"]:
             sp_base_point = self.load_datas["additional_info"]["sp_base_point"]
         else:
-            sp_base_point = int(self.load_datas["sp"][str(self._point["base_lv"])])
-        status_sp_max = int(sp_base_point + (sp_base_point * (self._point["int"] + self._point["int_bonus"]) / 100))
+            sp_base_point = int(self.load_datas["sp"][str(self.point["base_lv"])])
+        status_sp_max = int(sp_base_point + (sp_base_point * (self.point["int"]["base"] + self.point["int"]["bonus"]) / 100))
         self.dom_elements["sp_max"].value = status_sp_max
 
         # SP Recovery
 
         # Atk(not bow)
-        status_atk = int((self._point["str"] + self._point["str_bonus"])
-                + (self._point["dex"] + self._point["dex_bonus"]) * 0.2
-                + (self._point["luk"] + self._point["luk_bonus"]) * 0.3
+        status_atk = int((self.point["str"]["base"] + self.point["str"]["bonus"])
+                + (self.point["dex"]["base"] + self.point["dex"]["bonus"]) * 0.2
+                + (self.point["luk"]["base"] + self.point["luk"]["bonus"]) * 0.3
                 )
         self.dom_elements["atk"]["base"].value = status_atk
 
         # Def
-        status_def_base = int(self._point["base_lv"] * 0.5
-                            + (self._point["agi"] + self._point["agi_bonus"]) * 0.2
-                            + (self._point["vit"] + self._point["vit_bonus"]) * 0.5
+        status_def_base = int(self.point["base_lv"] * 0.5
+                            + (self.point["agi"]["base"] + self.point["agi"]["bonus"]) * 0.2
+                            + (self.point["vit"]["base"] + self.point["vit"]["bonus"]) * 0.5
                             )
         self.dom_elements["def"]["base"].value = status_def_base
 
         # Matk
-        status_matk_base = int((self._point["int"] + self._point["int_bonus"])
-                                + (self._point["dex"] + self._point["dex_bonus"]) * 0.2
-                                + (self._point["luk"] + self._point["luk_bonus"]) * 0.3
+        status_matk_base = int((self.point["int"]["base"] + self.point["int"]["bonus"])
+                                + (self.point["dex"]["base"] + self.point["dex"]["bonus"]) * 0.2
+                                + (self.point["luk"]["base"] + self.point["luk"]["bonus"]) * 0.3
                                 )
         self.dom_elements["matk"]["base"].value = status_matk_base
 
         # Mdef
-        status_mdef_base = int(self._point["base_lv"] * 0.2
-                                + (self._point["int"] + self._point["int_bonus"])
-                                + (self._point["vit"] + self._point["vit_bonus"]) * 0.2
-                                + (self._point["dex"] + self._point["dex_bonus"]) * 0.2
+        status_mdef_base = int(self.point["base_lv"] * 0.2
+                                + (self.point["int"]["base"] + self.point["int"]["bonus"])
+                                + (self.point["vit"]["base"] + self.point["vit"]["bonus"]) * 0.2
+                                + (self.point["dex"]["base"] + self.point["dex"]["bonus"]) * 0.2
                                 )
         self.dom_elements["mdef"]["base"].value = status_mdef_base
 
         # Hit
-        status_hit = int(175 + self._point["base_lv"]
-                            + (self._point["dex"] + self._point["dex_bonus"])
-                            + (self._point["luk"] + self._point["luk_bonus"]) * 0.3
+        status_hit = int(175 + self.point["base_lv"]
+                            + (self.point["dex"]["base"] + self.point["dex"]["bonus"])
+                            + (self.point["luk"]["base"] + self.point["luk"]["bonus"]) * 0.3
                             )
         self.dom_elements["hit"].value = status_hit
 
         # Flee
-        status_flee = int(100 + self._point["base_lv"]
-                            + (self._point["agi"] + self._point["agi_bonus"])
-                            + (self._point["luk"] + self._point["luk_bonus"]) * 0.2
+        status_flee = int(100 + self.point["base_lv"]
+                            + (self.point["agi"]["base"] + self.point["agi"]["bonus"])
+                            + (self.point["luk"]["base"] + self.point["luk"]["bonus"]) * 0.2
                             )
         self.dom_elements["flee"].value = status_flee
 
         # 完全回避 : Complete avoidance
-        status_complete_avoidance = 1 + int(((self._point["luk"] + self._point["luk_bonus"]) *0.1)*10)/10
+        status_complete_avoidance = 1 + int(((self.point["luk"]["base"] + self.point["luk"]["bonus"]) *0.1)*10)/10
         self.dom_elements["complete_avoidance"].value = status_complete_avoidance
 
         # Critical
-        status_critical = int((1 + ((self._point["luk"] + self._point["luk_bonus"]) *0.3))*10)/10
+        status_critical = int((1 + ((self.point["luk"]["base"] + self.point["luk"]["bonus"]) *0.3))*10)/10
         self.dom_elements["critical"].value = status_critical
 
         # Aspd(hand)
@@ -180,9 +170,6 @@ class CalculationModule(AbstractCalculationModule):
         on_horseback_point: float = 1 #未騎乗
         #on_horseback_point: float = 0.5 + on_horseback_skill_lv * 0.1 #騎乗時
         status_aspd = int((aspd_base_point
-                            + (math.sqrt(((self._point["agi"] + self._point["agi_bonus"]) * 3027 / 300)
-                            + ((self._point["dex"] + self._point["dex_bonus"]) * 55 / 300)) * (1 - aspd_penalty)) + shield_correction_point) * on_horseback_point * 10)/10
+                            + (math.sqrt(((self.point["agi"]["base"] + self.point["agi"]["bonus"]) * 3027 / 300)
+                            + ((self.point["dex"]["base"] + self.point["dex"]["bonus"]) * 55 / 300)) * (1 - aspd_penalty)) + shield_correction_point) * on_horseback_point * 10)/10
         self.dom_elements["aspd"].value = status_aspd
-
-    def calculation(self) -> None:
-        pass

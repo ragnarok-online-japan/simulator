@@ -8,11 +8,14 @@ class AbstractCalculationModule(ABC):
     job_class_name: str = None
     job_class_idx: int = None
 
-    headers={
+    headers: dict ={
         "Content-Type": "application/json",
         "Accept-Encoding": None, # delete unsafe header
         "Connection": None # delete unsafe header
     }
+
+    status_primary: tuple = ("str","agi","int","vit","dex","luk")
+    status_talent: tuple = ("pow","sta","wis","spl","con","crt")
 
     def is_valid(self) -> bool:
         return self._valid
