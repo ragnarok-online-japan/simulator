@@ -169,6 +169,9 @@ class Simulator:
 
         self.dom_elements["textarea_import_json"] = document.getElementById("textarea_import_json")
 
+        self.dom_elements["export_url"] = document.getElementById("export_url")
+        self.dom_elements["export_url"].onclick = self.onclick_export_to_url
+
         self.dom_elements["dialog_button_close"] = document.getElementById("dialog_button_close")
         self.dom_elements["dialog_button_close"].onclick = self.close_dialog
 
@@ -693,7 +696,7 @@ class Simulator:
 
         return data_json
 
-    def export_to_base64(self) -> None:
+    def export_to_url(self) -> str:
         data_json: str = self.export_to_json()
 
         # json => bz2 copressed
@@ -702,9 +705,12 @@ class Simulator:
         # bz2 compressed => base64
         data_base64 = binascii.b2a_base64(data_compressed).decode("utf-8")
 
-        export_url = document.getElementById("export_url")
         url = self._prefix_url + self._suffix_url + "?" + data_base64 + "#main"
-        export_url.href = url
+        return url
+
+    def onclick_export_to_url(self, event = None) -> None:
+        url = self.export_to_url()
+        window.open(url)
 
     def onclick_slot_select(self, event = None) -> None:
         if event is None:
@@ -783,12 +789,10 @@ class Simulator:
         print("[INFO]", "Delete localStorage, key:", key_description)
         localStorage.removeItem(key_description)
 
-    def calculation(self, event = None) -> None:
+    def calculation(self, event = None) -> bool:
         if self._initialized != True:
             # initialize未完了の場合終了
-            return
-
-        success: bool = True
+            return False
 
         try:
             # calculation
@@ -834,11 +838,11 @@ class Simulator:
                 self._calculation_module.calculation()
 
         except Exception as ex:
-            success = False
             traceback.print_exception(ex)
-
-        if success == True:
-            self.export_to_base64()
+            return False
+        else:
+            self.export_to_json()
+            return True
 
     def onclick_draw_status_window(self, event = None):
         self.calculation()
