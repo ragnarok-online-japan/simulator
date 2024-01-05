@@ -531,13 +531,12 @@ class Simulator:
 
         skill_lv = document.createElement("input")
         skill_lv.setAttribute("id", f"skill_lv.{skill_id}")
-        skill_lv.setAttribute("class", "form-control")
+        skill_lv.setAttribute("class", "form-number skill-lv")
         skill_lv.setAttribute("type", "number")
         skill_lv.setAttribute("name", skill_id)
         skill_lv.setAttribute("min", 0)
         skill_lv.setAttribute("max", max_lv)
         skill_lv.setAttribute("value", lv)
-        skill_lv.setAttribute("class", "form-number")
         div_col2.appendChild(skill_lv)
 
         div_col3 = document.createElement("div")

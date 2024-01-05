@@ -30,6 +30,10 @@ input.refining {
     width: 4em;
 }
 
+input.skill-lv {
+    width: 3em;
+}
+
 dialog {
     border: 0px;
 }
