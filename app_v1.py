@@ -25,7 +25,7 @@ class Simulator:
     _suffix_url: str = f"v1.html"
 
     _calculation_module: CalculationModule = None
-    _job_class_name: str = None
+    job_class_name: str = None
 
     dom_elements: dict[str] = {}
     load_datas: dict[str] = {
@@ -36,7 +36,7 @@ class Simulator:
         "weapon_type": None,
     }
 
-    _status_primary: dict = {
+    status_primary: dict = {
         "str": {
             "status_window_position" : (256, 22)
         },
@@ -56,7 +56,7 @@ class Simulator:
             "status_window_position" : (256, 102)
         }
     }
-    _status_talent: dict = {
+    status_talent: dict = {
         "pow": {
             "status_window_position" : (256, 142)
         },
@@ -77,7 +77,7 @@ class Simulator:
         }
     }
 
-    _status_result: dict = {
+    status_result: dict = {
         "atk": {
             "status_window_position" : (408, 26)
         },
@@ -133,7 +133,7 @@ class Simulator:
         self.dom_elements["job_class"].oninput = self.calculation
 
         # 基本ステータス
-        for key in self._status_primary.keys():
+        for key in self.status_primary.keys():
             self.dom_elements[key]: dict = {
                 "base"  : document.getElementById(f"status_{key}_base"),
                 "bonus" : document.getElementById(f"status_{key}_bonus"),
@@ -141,7 +141,7 @@ class Simulator:
             self.dom_elements[key]["base"].oninput = self.calculation
 
         # 特性ステータス
-        for key in self._status_talent.keys():
+        for key in self.status_talent.keys():
             self.dom_elements[key]: dict = {
                 "base"  : document.getElementById(f"status_{key}_base"),
                 "bonus" : document.getElementById(f"status_{key}_bonus"),
@@ -149,7 +149,7 @@ class Simulator:
             self.dom_elements[key]["base"].oninput = self.calculation
 
         # ステータス
-        for key in self._status_result.keys():
+        for key in self.status_result.keys():
             if key in  ("atk", "def", "matk", "mdef"):
                 self.dom_elements[key]: dict = {
                     "base"  : document.getElementById(f"status_{key}_base"),
@@ -373,17 +373,17 @@ class Simulator:
         document.getElementById("textarea_description").value = ""
 
         # 基本ステータス
-        for key in self._status_primary.keys():
+        for key in self.status_primary.keys():
             self.dom_elements[key]["base"].value = 1
             self.dom_elements[key]["bonus"].value = 0
 
         # 特性ステータス
-        for key in self._status_talent.keys():
+        for key in self.status_talent.keys():
             self.dom_elements[key]["base"].value = 0
             self.dom_elements[key]["bonus"].value = 0
 
         # ステータス
-        for key in self._status_result.keys():
+        for key in self.status_result.keys():
             if key in  ("atk", "def", "matk", "mdef"):
                 self.dom_elements[key]["base"].value = 1
                 self.dom_elements[key]["bonus"].value = 0
@@ -442,11 +442,11 @@ class Simulator:
             if "job_class" in data_dict["status"]:
                 self.dom_elements["job_class"].value = data_dict["status"]["job_class"]
 
-            for key in self._status_primary.keys():
+            for key in self.status_primary.keys():
                 if key in data_dict["status"]:
                     self.dom_elements[key]["base"].value = data_dict["status"][key]
 
-            for key in self._status_talent.keys():
+            for key in self.status_talent.keys():
                 if key in data_dict["status"] and len(self.dom_elements[key]) > 0:
                     self.dom_elements[key]["base"].value = data_dict["status"][key]
 
@@ -646,7 +646,7 @@ class Simulator:
             }
         }
 
-        for key in self._status_primary.keys():
+        for key in self.status_primary.keys():
             value: int = 0
             try:
                 value = int(self.dom_elements[key]["base"].value)
@@ -655,7 +655,7 @@ class Simulator:
 
             data_json["status"][key] = value
 
-        for key in self._status_talent:
+        for key in self.status_talent:
             if key in self.dom_elements and len(self.dom_elements[key]) > 0:
                 value: int = 0
                 try:
@@ -794,13 +794,13 @@ class Simulator:
             # calculation
             job_class_name = self.dom_elements["job_class"].value.strip()
             if self._calculation_module is None \
-                or (self._job_class_name is not None and self._job_class_name != job_class_name):
+                or (self.job_class_name is not None and self.job_class_name != job_class_name):
                 # Re-initalize
                 self._calculation_module = CalculationModule(self._prefix_url, self.dom_elements, self.load_datas)
 
             if self._calculation_module.is_valid() == True:
                 # save
-                self._job_class_name = job_class_name
+                self.job_class_name = job_class_name
 
                 job_class_idx = self._calculation_module.get_job_class_idx()
                 job_data = self.load_datas["job_classes"][job_class_idx]
@@ -816,13 +816,13 @@ class Simulator:
                     self.dom_elements["job_lv"].value = maximum
 
                 maximum = job_data["base_point_max"]
-                for key in self._status_primary.keys():
+                for key in self.status_primary.keys():
                     self.dom_elements[key]["base"].max = maximum
                     if int(self.dom_elements[key]["base"].value) > maximum:
                         self.dom_elements[key]["base"].value = maximum
 
                 maximum = job_data["talent_point_max"]
-                for key in self._status_talent.keys():
+                for key in self.status_talent.keys():
                     self.dom_elements[key]["base"].max = maximum
                     if int(self.dom_elements[key]["base"].value) > maximum:
                         self.dom_elements[key]["base"].value = maximum
@@ -876,22 +876,22 @@ class Simulator:
         zeny: int = 1
         draw.text((216,134), f"Weight:0/{weight_max} | Zeny:{zeny:,d}", "#000000", font=font_md, align="right", anchor="ra")
 
-        for key in self._status_primary.keys():
+        for key in self.status_primary.keys():
             text = self.dom_elements[key]["base"].value
             text += "+"
             text += self.dom_elements[key]["bonus"].value
-            position = self._status_primary[key]["status_window_position"]
+            position = self.status_primary[key]["status_window_position"]
             draw.text(position, text, "#000000", font=font_md, align="left")
 
-        for key in self._status_talent.keys():
+        for key in self.status_talent.keys():
             text = self.dom_elements[key]["base"].value
             text += "+"
             text += self.dom_elements[key]["bonus"].value
-            position = self._status_talent[key]["status_window_position"]
+            position = self.status_talent[key]["status_window_position"]
             draw.text(position, text, "#000000", font=font_md, align="left")
 
-        for key in self._status_result.keys():
-            if "status_window_position" in self._status_result[key]:
+        for key in self.status_result.keys():
+            if "status_window_position" in self.status_result[key]:
                 text: str = ""
                 if key in  ("atk", "def", "matk", "mdef"):
                     text = self.dom_elements[key]["base"].value
@@ -906,7 +906,7 @@ class Simulator:
                 else:
                     text = self.dom_elements[key].value
 
-                position = self._status_result[key]["status_window_position"]
+                position = self.status_result[key]["status_window_position"]
                 draw.text(position, text, "#000000", font=font_md, align="right", anchor="rt")
 
         # zoom x2

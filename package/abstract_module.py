@@ -2,27 +2,26 @@ from abc import ABC, abstractmethod
 
 class AbstractCalculationModule(ABC):
     _valid: bool = False
-    _prefix_url: str = "/"
-    _dom_elements: dict[str] = {}
-    _load_datas: dict[str] = {}
-    _point: dict = {}
-    _job_class_name: str = None
-    _job_class_idx: int = None
+    prefix_url: str = "/"
+    dom_elements: dict[str] = {}
+    load_datas: dict[str] = {}
+    job_class_name: str = None
+    job_class_idx: int = None
 
-    _headers={
+    headers={
         "Content-Type": "application/json",
         "Accept-Encoding": None, # delete unsafe header
-        "Connection": None # delete unsafe haader
+        "Connection": None # delete unsafe header
     }
 
     def is_valid(self) -> bool:
         return self._valid
 
-    def get_job_class_name(self) -> str:
-        return self._job_class_name
+    def get_job_class_name(self) -> str|None:
+        return self.job_class_name
 
-    def get_job_class_idx(self) -> int:
-        return self._job_class_idx
+    def get_job_class_idx(self) -> int|None:
+        return self.job_class_idx
 
     @abstractmethod
     def __init__(self, prefix_url: str, dom_elements: dict[str], load_datas: dict[str]) -> None:
