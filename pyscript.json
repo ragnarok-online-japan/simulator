@@ -3,8 +3,7 @@
         "numpy",
         "requests",
         "pyodide-http",
-        "Pillow",
-        "msgpack"
+        "Pillow"
     ],
     "files": {
         "/simulator/assets/img/statwin_bg.png": "./assets/img/statwin_bg.png",
