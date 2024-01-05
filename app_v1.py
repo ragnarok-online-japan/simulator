@@ -464,20 +464,19 @@ class Simulator:
             if "character_name" in data_dict["additional_info"]:
                 self.dom_elements["input_character_name"].value = data_dict["additional_info"]["character_name"]
 
-            if "overwrite" in data_dict and data_dict["overwrite"] == True:
-                if "additional_info" not in self.load_datas:
-                    self.load_datas["additional_info"] = {} #init
+            if "additional_info" not in self.load_datas:
+                self.load_datas["additional_info"] = {} #init
 
-                if "hp_base_point" in data_dict["additional_info"]:
-                    try:
-                        self.load_datas["additional_info"]["hp_base_point"] = int(data_dict["additional_info"]["hp_base_point"])
-                    except ValueError:
-                        pass
-                if "sp_base_point" in data_dict["additional_info"]:
-                    try:
-                        self.load_datas["additional_info"]["sp_base_point"] = int(data_dict["additional_info"]["sp_base_point"])
-                    except ValueError:
-                        pass
+            if "hp_base_point" in data_dict["additional_info"]:
+                try:
+                    self.load_datas["additional_info"]["hp_base_point"] = int(data_dict["additional_info"]["hp_base_point"])
+                except ValueError:
+                    pass
+            if "sp_base_point" in data_dict["additional_info"]:
+                try:
+                    self.load_datas["additional_info"]["sp_base_point"] = int(data_dict["additional_info"]["sp_base_point"])
+                except ValueError:
+                    pass
 
     def onclick_skill_append(self, event = None) -> None:
         skill_name: str = self.dom_elements["input_skill"].value
