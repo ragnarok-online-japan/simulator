@@ -229,8 +229,8 @@ class Simulator:
                 if data["name"] == "Unknown-Skill":
                     continue
                 option = document.createElement("option")
-                option.value = idx
-                option.label= data["name"]
+                option.value = data["name"]
+                option.setAttribute("data-skill-id", idx)
 
                 datalist_skill.appendChild(option)
 
@@ -477,7 +477,17 @@ class Simulator:
                         pass
 
     def onclick_skill_append(self, event = None) -> None:
-        skill_id: str = self.dom_elements["input_skill"].value
+        skill_name: str = self.dom_elements["input_skill"].value
+        skill_option = document.querySelector(f"#datalist_skill option[value='{skill_name}']")
+
+        skill_id: str = None
+        if skill_option is None:
+            print("[WARNING]", f"Unknown skill: {skill_name}")
+            self.dom_elements["input_skill"].value = ""
+            return
+        else:
+            skill_id = skill_option.getAttribute("data-skill-id")
+
         if skill_id in self.dom_elements["skills"]:
             # 追加済み
             pass
