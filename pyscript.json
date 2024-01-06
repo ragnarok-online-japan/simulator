@@ -3,13 +3,16 @@
         "numpy",
         "requests",
         "pyodide-http",
-        "Pillow"
+        "Pillow",
+        "lark"
     ],
     "files": {
         "/simulator/assets/img/statwin_bg.png": "./assets/img/statwin_bg.png",
         "/simulator/assets/font/SourceHanCodeJP-Medium.otf": "./assets/font/SourceHanCodeJP-Medium.otf",
         "/simulator/assets/font/Melete-Regular.otf": "./assets/font/Melete-Regular.otf",
         "/simulator/package/abstract_module.py": "./package/abstract_module.py",
-        "/simulator/package/module_v1.py": "./package/module_v1.py"
+        "/simulator/package/module_v1.py": "./package/module_v1.py",
+        "/simulator/package/lark_visitor.py": "./package/lark_visitor.py",
+        "/simulator/package/grammer.lark": "./package/grammer.lark"
     }
 }
