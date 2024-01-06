@@ -1,8 +1,11 @@
 import math
+import traceback
+from lark import Lark
 
 import requests
 
-from .abstract_module import AbstractCalculationModule
+from package.lark_visitor import Visitor, Environment
+from package.abstract_module import AbstractCalculationModule
 
 class CalculationModule(AbstractCalculationModule):
     _in_memory: dict = {}
@@ -22,16 +25,13 @@ class CalculationModule(AbstractCalculationModule):
             }
 
             for key in self.status_primary:
-                self.point[key] = {
-                    "base": int(dom_elements[key]["base"].value),
-                    "bonus": int(dom_elements[key]["bonus"].value)
-                }
+                for sub in ("base", "bonus"):
+                    self.point[f"{key}_{sub}"] = int(dom_elements[f"{key}_{sub}"].value)
 
             for key in self.status_talent:
-                self.point[key] = {
-                    "base": int(dom_elements[key]["base"].value),
-                    "bonus": int(dom_elements[key]["bonus"].value)
-                }
+                for sub in ("base", "bonus"):
+                    self.point[f"{key}_{sub}"] = int(dom_elements[f"{key}_{sub}"].value)
+
         except ValueError:
             pass
 
@@ -81,6 +81,11 @@ class CalculationModule(AbstractCalculationModule):
         # 次回以降の処理のため記録
         self.job_class_name = job_class
         self.job_class_idx = job_class_idx
+
+        # Lark
+        rule = open("./package/grammer.lark").read()
+        self.lark_parser = Lark(rule, start="program", parser="lalr")
+
         self._valid = True
 
     def pre_calc(self) -> None:
@@ -96,7 +101,7 @@ class CalculationModule(AbstractCalculationModule):
             hp_base_point = self.load_datas["additional_info"]["hp_base_point"]
         else:
             hp_base_point = int(self.load_datas["hp"][str(self.point["base_lv"])])
-        status_hp_max = int(hp_base_point + (hp_base_point * (self.point["vit"]["base"] + self.point["vit"]["bonus"]) / 100))
+        status_hp_max = int(hp_base_point + (hp_base_point * (self.point["vit_base"] + self.point["vit_bonus"]) / 100))
         self.dom_elements["hp_max"].value = status_hp_max
 
         # HP Recovery
@@ -107,60 +112,60 @@ class CalculationModule(AbstractCalculationModule):
             sp_base_point = self.load_datas["additional_info"]["sp_base_point"]
         else:
             sp_base_point = int(self.load_datas["sp"][str(self.point["base_lv"])])
-        status_sp_max = int(sp_base_point + (sp_base_point * (self.point["int"]["base"] + self.point["int"]["bonus"]) / 100))
+        status_sp_max = int(sp_base_point + (sp_base_point * (self.point["int_base"] + self.point["int_bonus"]) / 100))
         self.dom_elements["sp_max"].value = status_sp_max
 
         # SP Recovery
 
         # Atk(not bow)
-        status_atk = int((self.point["str"]["base"] + self.point["str"]["bonus"])
-                + (self.point["dex"]["base"] + self.point["dex"]["bonus"]) * 0.2
-                + (self.point["luk"]["base"] + self.point["luk"]["bonus"]) * 0.3
+        status_atk = int((self.point["str_base"] + self.point["str_bonus"])
+                + (self.point["dex_base"] + self.point["dex_bonus"]) * 0.2
+                + (self.point["luk_base"] + self.point["luk_bonus"]) * 0.3
                 )
-        self.dom_elements["atk"]["base"].value = status_atk
+        self.dom_elements["atk_base"].value = status_atk
 
         # Def
         status_def_base = int(self.point["base_lv"] * 0.5
-                            + (self.point["agi"]["base"] + self.point["agi"]["bonus"]) * 0.2
-                            + (self.point["vit"]["base"] + self.point["vit"]["bonus"]) * 0.5
+                            + (self.point["agi_base"] + self.point["agi_bonus"]) * 0.2
+                            + (self.point["vit_base"] + self.point["vit_bonus"]) * 0.5
                             )
-        self.dom_elements["def"]["base"].value = status_def_base
+        self.dom_elements["def_base"].value = status_def_base
 
         # Matk
-        status_matk_base = int((self.point["int"]["base"] + self.point["int"]["bonus"])
-                                + (self.point["dex"]["base"] + self.point["dex"]["bonus"]) * 0.2
-                                + (self.point["luk"]["base"] + self.point["luk"]["bonus"]) * 0.3
+        status_matk_base = int((self.point["int_base"] + self.point["int_bonus"])
+                                + (self.point["dex_base"] + self.point["dex_bonus"]) * 0.2
+                                + (self.point["luk_base"] + self.point["luk_bonus"]) * 0.3
                                 )
-        self.dom_elements["matk"]["base"].value = status_matk_base
+        self.dom_elements["matk_base"].value = status_matk_base
 
         # Mdef
         status_mdef_base = int(self.point["base_lv"] * 0.2
-                                + (self.point["int"]["base"] + self.point["int"]["bonus"])
-                                + (self.point["vit"]["base"] + self.point["vit"]["bonus"]) * 0.2
-                                + (self.point["dex"]["base"] + self.point["dex"]["bonus"]) * 0.2
+                                + (self.point["int_base"] + self.point["int_bonus"])
+                                + (self.point["vit_base"] + self.point["vit_bonus"]) * 0.2
+                                + (self.point["dex_base"] + self.point["dex_bonus"]) * 0.2
                                 )
-        self.dom_elements["mdef"]["base"].value = status_mdef_base
+        self.dom_elements["mdef_base"].value = status_mdef_base
 
         # Hit
         status_hit = int(175 + self.point["base_lv"]
-                            + (self.point["dex"]["base"] + self.point["dex"]["bonus"])
-                            + (self.point["luk"]["base"] + self.point["luk"]["bonus"]) * 0.3
+                            + (self.point["dex_base"] + self.point["dex_bonus"])
+                            + (self.point["luk_base"] + self.point["luk_bonus"]) * 0.3
                             )
         self.dom_elements["hit"].value = status_hit
 
         # Flee
         status_flee = int(100 + self.point["base_lv"]
-                            + (self.point["agi"]["base"] + self.point["agi"]["bonus"])
-                            + (self.point["luk"]["base"] + self.point["luk"]["bonus"]) * 0.2
+                            + (self.point["agi_base"] + self.point["agi_bonus"])
+                            + (self.point["luk_base"] + self.point["luk_bonus"]) * 0.2
                             )
         self.dom_elements["flee"].value = status_flee
 
         # 完全回避 : Complete avoidance
-        status_complete_avoidance = 1 + int(((self.point["luk"]["base"] + self.point["luk"]["bonus"]) *0.1)*10)/10
+        status_complete_avoidance = 1 + int(((self.point["luk_base"] + self.point["luk_bonus"]) *0.1)*10)/10
         self.dom_elements["complete_avoidance"].value = status_complete_avoidance
 
         # Critical
-        status_critical = int((1 + ((self.point["luk"]["base"] + self.point["luk"]["bonus"]) *0.3))*10)/10
+        status_critical = int((1 + ((self.point["luk_base"] + self.point["luk_bonus"]) *0.3))*10)/10
         self.dom_elements["critical"].value = status_critical
 
         # Aspd(hand)
@@ -170,6 +175,19 @@ class CalculationModule(AbstractCalculationModule):
         on_horseback_point: float = 1 #未騎乗
         #on_horseback_point: float = 0.5 + on_horseback_skill_lv * 0.1 #騎乗時
         status_aspd = int((aspd_base_point
-                            + (math.sqrt(((self.point["agi"]["base"] + self.point["agi"]["bonus"]) * 3027 / 300)
-                            + ((self.point["dex"]["base"] + self.point["dex"]["bonus"]) * 55 / 300)) * (1 - aspd_penalty)) + shield_correction_point) * on_horseback_point * 10)/10
+                            + (math.sqrt(((self.point["agi_base"] + self.point["agi_bonus"]) * 3027 / 300)
+                            + ((self.point["dex_base"] + self.point["dex_bonus"]) * 55 / 300)) * (1 - aspd_penalty)) + shield_correction_point) * on_horseback_point * 10)/10
         self.dom_elements["aspd"].value = status_aspd
+
+        program_code: str = """
+        return 1
+        """
+
+        try:
+            tree = self.lark_parser.parse(program_code)
+            env = Environment(self.point)
+            visitor = Visitor()
+            result = visitor.visit(tree, env)
+            print(result)
+        except Exception as ex:
+            traceback.print_exception(ex)

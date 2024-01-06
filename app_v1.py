@@ -134,27 +134,23 @@ class Simulator:
 
         # 基本ステータス
         for key in self.status_primary.keys():
-            self.dom_elements[key]: dict = {
-                "base"  : document.getElementById(f"status_{key}_base"),
-                "bonus" : document.getElementById(f"status_{key}_bonus"),
-            }
-            self.dom_elements[key]["base"].oninput = self.calculation
+            self.dom_elements[f"{key}_base"] = document.getElementById(f"status_{key}_base")
+            self.dom_elements[f"{key}_base"].oninput = self.calculation
+
+            self.dom_elements[f"{key}_bonus"] = document.getElementById(f"status_{key}_bonus")
 
         # 特性ステータス
         for key in self.status_talent.keys():
-            self.dom_elements[key]: dict = {
-                "base"  : document.getElementById(f"status_{key}_base"),
-                "bonus" : document.getElementById(f"status_{key}_bonus"),
-            }
-            self.dom_elements[key]["base"].oninput = self.calculation
+            self.dom_elements[f"{key}_base"] = document.getElementById(f"status_{key}_base")
+            self.dom_elements[f"{key}_base"].oninput = self.calculation
+
+            self.dom_elements[f"{key}_bonus"] = document.getElementById(f"status_{key}_bonus")
 
         # ステータス
         for key in self.status_result.keys():
             if key in  ("atk", "def", "matk", "mdef"):
-                self.dom_elements[key]: dict = {
-                    "base"  : document.getElementById(f"status_{key}_base"),
-                    "bonus" : document.getElementById(f"status_{key}_bonus"),
-                }
+                self.dom_elements[f"{key}_base"] = document.getElementById(f"status_{key}_base")
+                self.dom_elements[f"{key}_bonus"] = document.getElementById(f"status_{key}_bonus")
             else:
                 self.dom_elements[key] = document.getElementById(f"status_{key}")
 
@@ -447,11 +443,11 @@ class Simulator:
 
             for key in self.status_primary.keys():
                 if key in data_dict["status"]:
-                    self.dom_elements[key]["base"].value = data_dict["status"][key]
+                    self.dom_elements[f"{key}_base"].value = data_dict["status"][key]
 
             for key in self.status_talent.keys():
-                if key in data_dict["status"] and len(self.dom_elements[key]) > 0:
-                    self.dom_elements[key]["base"].value = data_dict["status"][key]
+                if key in data_dict["status"]:
+                    self.dom_elements[f"{key}_base"].value = data_dict["status"][key]
 
         if "skills" in data_dict:
             for key in data_dict["skills"].keys():
@@ -651,17 +647,17 @@ class Simulator:
         for key in self.status_primary.keys():
             value: int = 0
             try:
-                value = int(self.dom_elements[key]["base"].value)
+                value = int(self.dom_elements[f"{key}_base"].value)
             except ValueError:
                 pass
 
             data_json["status"][key] = value
 
-        for key in self.status_talent:
-            if key in self.dom_elements and len(self.dom_elements[key]) > 0:
+        for key in self.status_talent.keys():
+            if f"{key}_base" in self.dom_elements:
                 value: int = 0
                 try:
-                    value = int(self.dom_elements[key]["base"].value)
+                    value = int(self.dom_elements[f"{key}_base"].value)
                 except ValueError:
                     pass
 
@@ -820,15 +816,15 @@ class Simulator:
 
                 maximum = job_data["base_point_max"]
                 for key in self.status_primary.keys():
-                    self.dom_elements[key]["base"].max = maximum
-                    if int(self.dom_elements[key]["base"].value) > maximum:
-                        self.dom_elements[key]["base"].value = maximum
+                    self.dom_elements[f"{key}_base"].max = maximum
+                    if int(self.dom_elements[f"{key}_base"].value) > maximum:
+                        self.dom_elements[f"{key}_base"].value = maximum
 
                 maximum = job_data["talent_point_max"]
                 for key in self.status_talent.keys():
-                    self.dom_elements[key]["base"].max = maximum
-                    if int(self.dom_elements[key]["base"].value) > maximum:
-                        self.dom_elements[key]["base"].value = maximum
+                    self.dom_elements[f"{key}_base"].max = maximum
+                    if int(self.dom_elements[f"{key}_base"].value) > maximum:
+                        self.dom_elements[f"{key}_base"].value = maximum
 
                 # 計算前の準備
                 self._calculation_module.pre_calc()
@@ -880,16 +876,16 @@ class Simulator:
         draw.text((216,134), f"Weight:0/{weight_max} | Zeny:{zeny:,d}", "#000000", font=font_md, align="right", anchor="ra")
 
         for key in self.status_primary.keys():
-            text = self.dom_elements[key]["base"].value
+            text = self.dom_elements[f"{key}_base"].value
             text += "+"
-            text += self.dom_elements[key]["bonus"].value
+            text += self.dom_elements[f"{key}_bonus"].value
             position = self.status_primary[key]["status_window_position"]
             draw.text(position, text, "#000000", font=font_md, align="left")
 
         for key in self.status_talent.keys():
-            text = self.dom_elements[key]["base"].value
+            text = self.dom_elements[f"{key}_base"].value
             text += "+"
-            text += self.dom_elements[key]["bonus"].value
+            text += self.dom_elements[f"{key}_bonus"].value
             position = self.status_talent[key]["status_window_position"]
             draw.text(position, text, "#000000", font=font_md, align="left")
 
@@ -897,9 +893,9 @@ class Simulator:
             if "status_window_position" in self.status_result[key]:
                 text: str = ""
                 if key in  ("atk", "def", "matk", "mdef"):
-                    text = self.dom_elements[key]["base"].value
+                    text = self.dom_elements[f"{key}_base"].value
                     text += " + "
-                    text += self.dom_elements[key]["bonus"].value
+                    text += self.dom_elements[f"{key}_bonus"].value
                 elif key == "flee":
                     text = self.dom_elements[key].value
                     text += " + "
