@@ -75,27 +75,27 @@ class Visitor():
 
         return self.visit(func.tree(), local_env)
 
-    def addition(self, tree: ParseTree, env):
+    def addition(self, tree: ParseTree, env) -> int|float:
         left = self.visit(tree.children[0], env)
         right = self.visit(tree.children[1], env)
         return left + right
 
-    def substraction(self, tree: ParseTree, env) -> float:
+    def substraction(self, tree: ParseTree, env) -> int|float:
         left = self.visit(tree.children[0], env)
         right = self.visit(tree.children[1], env)
         return left - right
 
-    def multiplication(self, tree: ParseTree, env) -> float:
+    def multiplication(self, tree: ParseTree, env) -> int|float:
         left = self.visit(tree.children[0], env)
         right = self.visit(tree.children[1], env)
         return left * right
 
-    def divisiton(self, tree: ParseTree, env) -> float:
+    def divisiton(self, tree: ParseTree, env) -> int|float:
         left = self.visit(tree.children[0], env)
         right = self.visit(tree.children[1], env)
         return left / right
 
-    def symbol(self, tree: ParseTree, env):
+    def symbol(self, tree: ParseTree, env) -> str|int|float|None:
         key = tree.children[0].value
         return env.get(key)
 
@@ -115,11 +115,12 @@ class Function():
         return self._parameters
 
     def tree(self):
-            return self._tree
+        return self._tree
 
 class Environment():
     _point: dict = {}
     _env: dict = {}
+
     def __init__(self, point):
         self._point = point
 
