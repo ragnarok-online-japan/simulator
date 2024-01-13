@@ -23,6 +23,7 @@ class Simulator:
     _export_json_format_version: int = 1
     _prefix_url: str = "/"
     _suffix_url: str = f"v1.html"
+    _rood_url: str = "https://rodb.aws.0nyx.net/ROOD/"
 
     _calculation_module: CalculationModule = None
     job_class_name: str = None
@@ -116,9 +117,10 @@ class Simulator:
         "Connection": None # delete unsafe header
     }
 
-    def __init__(self, prefix_url = "/", suffix_url="index.html") -> None:
+    def __init__(self, prefix_url = "/", suffix_url="index.html", rood_url="https://rodb.aws.0nyx.net/ROOD/") -> None:
         self._prefix_url = prefix_url
         self._suffix_url = suffix_url
+        self._rood_url = rood_url
 
         # Base Lv
         self.dom_elements["base_lv"] = document.getElementById("status_base_lv")
@@ -234,7 +236,7 @@ class Simulator:
                 datalist_skill.appendChild(option)
 
         # アイテム
-        response = requests.get(self._prefix_url + f"data/items.json", headers=self.headers)
+        response = requests.get(self._rood_url + f"items.json", headers=self.headers)
         if response.status_code == 200:
             self.load_datas["items"] = response.json()
 
@@ -250,7 +252,7 @@ class Simulator:
             datalist_equipment_accessory1 = document.getElementById("datalist_equipment_accessory1")
             datalist_equipment_accessory2 = document.getElementById("datalist_equipment_accessory2")
 
-            response = requests.get(self._prefix_url + f"data/items_update.json", headers=self.headers)
+            response = requests.get(self._rood_url + f"items_update.json", headers=self.headers)
             if response.status_code == 200:
                 items_update = response.json()
                 for key in items_update.keys():
