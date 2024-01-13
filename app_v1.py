@@ -22,7 +22,7 @@ class Simulator:
     _initialized: bool = False
     _export_json_format_version: int = 1
     _prefix_url: str = "/"
-    _suffix_url: str = f"v1.html"
+    _suffix_url: str = "v1.html"
     _rood_url: str = "https://rodb.aws.0nyx.net/ROOD/"
 
     _calculation_module: CalculationModule = None
@@ -117,10 +117,12 @@ class Simulator:
         "Connection": None # delete unsafe header
     }
 
-    def __init__(self, prefix_url = "/", suffix_url="index.html", rood_url="https://rodb.aws.0nyx.net/ROOD/") -> None:
+    def __init__(self, prefix_url: str, suffix_url: str|None = None, rood_url: str|None = None) -> None:
         self._prefix_url = prefix_url
-        self._suffix_url = suffix_url
-        self._rood_url = rood_url
+        if suffix_url is not None:
+            self._suffix_url = suffix_url
+        if rood_url is not None:
+            self._rood_url = rood_url
 
         # Base Lv
         self.dom_elements["base_lv"] = document.getElementById("status_base_lv")
@@ -940,7 +942,7 @@ def main():
     query_strings = URLSearchParams.new(location.search)
 
     prefix_url: str = f"{location.protocol}//{location.host}/simulator/"
-    instance = Simulator(prefix_url, "v1.html")
+    instance = Simulator(prefix_url)
 
     result_import: bool = None
     if str(query_strings) != "":
