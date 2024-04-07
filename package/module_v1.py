@@ -4,7 +4,7 @@ from lark import Lark
 
 import requests
 
-from package.lark_visitor import Visitor, Environment
+from package.visitor import Visitor, Environment
 from package.abstract_module import AbstractCalculationModule
 
 class CalculationModule(AbstractCalculationModule):

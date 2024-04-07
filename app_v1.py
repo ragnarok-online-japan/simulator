@@ -15,8 +15,9 @@ import traceback
 import urllib.parse
 
 from package.module_v1 import CalculationModule
-pyodide_http.patch_all()
+import package.base65536
 
+pyodide_http.patch_all()
 
 class Simulator:
     _initialized: bool = False
@@ -188,7 +189,7 @@ class Simulator:
 
         # 職業情報
         response = requests.get(prefix_url + "data/job_classes.json", headers=self.headers)
-        self.load_datas["job_classes"]: list = response.json()
+        self.load_datas["job_classes"] = response.json()
 
         if len(self.load_datas["job_classes"]) > 0:
             datalist_job_classes = document.getElementById("datalist_job_classes")
@@ -204,9 +205,9 @@ class Simulator:
 
         # スキル
         self.dom_elements["div_skills"] = document.getElementById("div_skills")
-        self.dom_elements["skills"]: dict = {}
-        self.dom_elements["skill_lv"]: dict = {}
-        self.dom_elements["skill_enable"]: dict = {}
+        self.dom_elements["skills"] = {}
+        self.dom_elements["skill_lv"] = {}
+        self.dom_elements["skill_enable"] = {}
 
         response = requests.get(self._prefix_url + f"data/skill_list.json", headers=self.headers)
         if response.status_code == 200:
@@ -610,10 +611,10 @@ class Simulator:
         self.calculation()
         self.draw_img_status_window()
 
-    def import_from_base64(self, data_base64: str) -> bool:
+    def import_from_base65536(self, data_base65536: str) -> bool:
         success: bool = False
         try:
-            data_compressed = binascii.a2b_base64(data_base64.encode("utf-8"))
+            data_compressed = package.base65536.decode(data_base65536)
             data_json = bz2.decompress(data_compressed)
             self.dom_elements["textarea_import_json"].value = data_json.decode("utf-8")
             self.import_from_json(data_json.decode("utf-8"))
@@ -701,10 +702,10 @@ class Simulator:
         # json => bz2 copressed
         data_compressed = bz2.compress(data_json.encode("utf-8"), compresslevel=9)
 
-        # bz2 compressed => base64
-        data_base64 = binascii.b2a_base64(data_compressed).decode("utf-8")
+        # bz2 compressed => base65536
+        data_base65536 = package.base65536.encode(data_compressed)
 
-        url = self._prefix_url + self._suffix_url + "?" + data_base64 + "#main"
+        url = self._prefix_url + self._suffix_url + "?" + data_base65536 + "#main"
         return url
 
     def onclick_export_to_url(self, event = None) -> None:
@@ -946,9 +947,8 @@ def main():
 
     result_import: bool = None
     if str(query_strings) != "":
-        data = str(query_strings)
-        data_base64 = urllib.parse.unquote(data)
-        result_import = instance.import_from_base64(data_base64)
+        data_base_encoded = urllib.parse.unquote(str(query_strings))
+        result_import = instance.import_from_base65536(data_base_encoded[:-1])
 
     execute_calculation: bool = True
     if result_import is not None:
