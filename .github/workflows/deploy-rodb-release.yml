@@ -21,6 +21,6 @@ jobs:
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
                   port: ${{ secrets.SSH_PORT }}
                   script: |
-                    cd /var/www/html/simulator/
+                    cd /var/www/html_rodb/simulator/
                     git checkout main
                     git pull origin main
