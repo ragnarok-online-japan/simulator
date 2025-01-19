@@ -855,7 +855,7 @@ class Simulator:
         font_logo = ImageFont.truetype("./assets/font/SourceHanCodeJP-Medium.otf", size=8)
         draw = ImageDraw.Draw(img)
 
-        draw.text((0,200), "Powerd by\n Ragnarok Online Japan Developers", "#16507b", font=font_logo, align="left")
+        draw.text((0,200), "Powerd by\n Ragnarok Online Japan Simulator", "#16507b", font=font_logo, align="left")
 
         draw.text((20,1), "基本情報", "#000000", font=font_lg, align="left")
         draw.text((236,1), "ステータス", "#000000", font=font_lg, align="left")
