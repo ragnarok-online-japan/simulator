@@ -3,10 +3,10 @@ from abc import ABC, abstractmethod
 class AbstractCalculationModule(ABC):
     _valid: bool = False
     prefix_url: str = "/"
-    dom_elements: dict[str] = {}
-    load_datas: dict[str] = {}
-    job_class_name: str = None
-    job_class_idx: int = None
+    dom_elements: dict = {}
+    load_datas: dict = {}
+    job_class_name: str|None = None
+    job_class_idx: int|None = None
 
     headers: dict ={
         "Content-Type": "application/json",
@@ -27,7 +27,7 @@ class AbstractCalculationModule(ABC):
         return self.job_class_idx
 
     @abstractmethod
-    def __init__(self, prefix_url: str, dom_elements: dict[str], load_datas: dict[str]) -> None:
+    def __init__(self, prefix_url: str, dom_elements: dict, load_datas: dict) -> None:
         pass
 
     @abstractmethod

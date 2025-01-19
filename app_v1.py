@@ -14,7 +14,6 @@ import traceback
 import urllib.parse
 
 from package.module_v1 import CalculationModule
-import package.base65536
 
 pyodide_http.patch_all()
 
@@ -242,7 +241,8 @@ class Simulator:
             self.load_datas["items"] = response.json()
 
         if len(self.load_datas["items"]) > 0:
-            datalist_equipment_weapon = document.getElementById("datalist_equipment_weapon")
+            datalist_equipment_weapon_right = document.getElementById("datalist_equipment_weapon_right")
+            datalist_equipment_weapon_left = document.getElementById("datalist_equipment_weapon_left")
             datalist_equipment_headgear_top = document.getElementById("datalist_equipment_headgear_top")
             datalist_equipment_headgear_center = document.getElementById("datalist_equipment_headgear_center")
             datalist_equipment_headgear_lower = document.getElementById("datalist_equipment_headgear_lower")
@@ -273,7 +273,15 @@ class Simulator:
                 option.value = item_name
                 option.setAttribute("data-item-id", idx)
 
-                if item["type"] == "兜":
+                if item["type"] in ("短剣", "片手剣", "剣", "両手剣","カタール", "片手斧", "斧", "両手斧", "槍", "片手槍", "両手槍", "鈍器", "本", "弓", "投擲",
+                                    "杖", "片手杖", "両手杖", "爪", "鞭", "楽器", "忍者刀", "風魔手裏剣", "銃", "ハンドガン", "ライフル", "ショットガン", "ガトリングガン", "グレネードガン"):
+                    datalist_equipment_weapon_right.appendChild(option)
+
+                    if item["type"] in ("短剣", "片手剣", "片手斧"):
+                        option = option.cloneNode(True)
+                        datalist_equipment_weapon_left.appendChild(option)
+
+                elif item["type"] == "兜":
                     if "position" not in item:
                         pass
                     elif item["position"] == "上段":
@@ -309,6 +317,8 @@ class Simulator:
 
                 elif item["type"] == "アクセサリー(2)":
                     datalist_equipment_accessory2.appendChild(option)
+                else:
+                    print(item["type"])
 
         # セーブ/ロード
         div_save_load = document.getElementById("div_save_load")
@@ -376,19 +386,19 @@ class Simulator:
 
         # 基本ステータス
         for key in self.status_primary.keys():
-            self.dom_elements[key]["base"].value = 1
-            self.dom_elements[key]["bonus"].value = 0
+            self.dom_elements[f"{key}_base"].value = 1
+            self.dom_elements[f"{key}_bonus"].value = 0
 
         # 特性ステータス
         for key in self.status_talent.keys():
-            self.dom_elements[key]["base"].value = 0
-            self.dom_elements[key]["bonus"].value = 0
+            self.dom_elements[f"{key}_base"].value = 0
+            self.dom_elements[f"{key}_bonus"].value = 0
 
         # ステータス
         for key in self.status_result.keys():
             if key in  ("atk", "def", "matk", "mdef"):
-                self.dom_elements[key]["base"].value = 1
-                self.dom_elements[key]["bonus"].value = 0
+                self.dom_elements[f"{key}_base"].value = 1
+                self.dom_elements[f"{key}_bonus"].value = 0
             else:
                 self.dom_elements[key].value = 1
 
@@ -609,11 +619,11 @@ class Simulator:
         self.calculation()
         self.draw_img_status_window()
 
-    def import_from_base65536(self, data_base65536: str) -> bool:
+    def import_from_base65536(self, data_base64: str) -> bool:
         success: bool = False
         try:
-            data_compressed: str = package.base65536.decode(data_base65536)
-            data_json = bz2.decompress(data_compressed.encode())
+            data_compressed = base64.urlsafe_b64decode(data_base64)
+            data_json = bz2.decompress(data_compressed)
             self.dom_elements["textarea_import_json"].value = data_json.decode("utf-8")
             self.import_from_json(data_json.decode("utf-8"))
             success = True
@@ -700,10 +710,10 @@ class Simulator:
         # json => bz2 copressed
         data_compressed = bz2.compress(data_json.encode("utf-8"), compresslevel=9)
 
-        # bz2 compressed => base65536
-        data_base65536 = package.base65536.encode(data_compressed)
+        # bz2 compressed => base64
+        data_base64 = base64.urlsafe_b64encode(data_compressed).decode("utf-8")
 
-        url = self._prefix_url + self._suffix_url + "?" + data_base65536 + "#main"
+        url = self._prefix_url + self._suffix_url + "?" + data_base64 + "#main"
         return url
 
     def onclick_export_to_url(self, event = None) -> None:

@@ -8,7 +8,7 @@ from package.abstract_module import AbstractCalculationModule
 class CalculationModule(AbstractCalculationModule):
     _memory: dict = {}
 
-    def __init__(self, prefix_url: str, dom_elements: dict[str], load_datas: dict[str]) -> None:
+    def __init__(self, prefix_url: str, dom_elements: dict, load_datas: dict) -> None:
         # init
         self._valid = False
 
@@ -33,7 +33,7 @@ class CalculationModule(AbstractCalculationModule):
 
         # 職業
         job_class: str = str(self.dom_elements["job_class"].value).strip()
-        job_class_idx: int = None
+        job_class_idx: int|None = None
         parent_direcoty: str = ""
         if "job_classes" in self.load_datas:
             ids = [idx for idx, value in enumerate(self.load_datas["job_classes"]) if value["class"] == job_class]
