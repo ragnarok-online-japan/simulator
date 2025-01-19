@@ -1,14 +1,14 @@
 # app.py
-from datetime import datetime
-import re
 from PIL import Image, ImageFont, ImageDraw
+from datetime import datetime
 from io import BytesIO
 from js import location,URLSearchParams,localStorage,window # type: ignore
-from pyscript import document
+from pyscript import document # type: ignore
 import base64
 import bz2
 import json
 import pyodide_http
+import re
 import requests
 import traceback
 import urllib.parse
@@ -23,13 +23,12 @@ class Simulator:
     _export_json_format_version: int = 1
     _prefix_url: str = "/"
     _suffix_url: str = "v1.html"
-    _rood_url: str = "https://rodb.aws.0nyx.net/ROOD/"
 
-    _calculation_module: CalculationModule = None
-    job_class_name: str = None
+    _calculation_module: CalculationModule|None = None
+    job_class_name: str|None = None
 
-    dom_elements: dict[str] = {}
-    load_datas: dict[str] = {
+    dom_elements: dict = {}
+    load_datas: dict = {
         "hp": None,
         "job_classese": None,
         "skill_list": {},
@@ -238,7 +237,7 @@ class Simulator:
                 datalist_skill.appendChild(option)
 
         # アイテム
-        response = requests.get(self._rood_url + f"items.json", headers=self.headers)
+        response = requests.get(self._prefix_url + f"data/items.json", headers=self.headers)
         if response.status_code == 200:
             self.load_datas["items"] = response.json()
 
@@ -254,7 +253,7 @@ class Simulator:
             datalist_equipment_accessory1 = document.getElementById("datalist_equipment_accessory1")
             datalist_equipment_accessory2 = document.getElementById("datalist_equipment_accessory2")
 
-            response = requests.get(self._rood_url + f"items_update.json", headers=self.headers)
+            response = requests.get(self._prefix_url + f"data/items_update.json", headers=self.headers)
             if response.status_code == 200:
                 items_update = response.json()
                 for key in items_update.keys():
@@ -420,7 +419,7 @@ class Simulator:
             self.view_dialog(f"*** ERROR ***\nJSONからのインポートに失敗しました\n{ex}")
 
     def import_from_json(self, data_json: str) -> None:
-        format_version: int = None
+        format_version: int = 0
         try:
             data_dict = json.loads(data_json)
         except json.decoder.JSONDecodeError as ex:
@@ -482,7 +481,7 @@ class Simulator:
         skill_name: str = self.dom_elements["input_skill"].value
         skill_option = document.querySelector(f"#datalist_skill option[value='{skill_name}']")
 
-        skill_id: str = None
+        skill_id: str|None = None
         if skill_option is None:
             print("[WARNING]", f"Unknown skill: {skill_name}")
             self.dom_elements["input_skill"].value = ""
@@ -502,7 +501,7 @@ class Simulator:
         self.calculation()
         self.draw_img_status_window()
 
-    def append_skill_row(self, skill_id: str, data: dict) -> None:
+    def append_skill_row(self, skill_id: str|None, data: dict) -> None:
         if skill_id not in self.load_datas["skill_list"]:
             print("[WARNING]", f"Unknown skill: {skill_id}")
             return
@@ -613,8 +612,8 @@ class Simulator:
     def import_from_base65536(self, data_base65536: str) -> bool:
         success: bool = False
         try:
-            data_compressed = package.base65536.decode(data_base65536)
-            data_json = bz2.decompress(data_compressed)
+            data_compressed: str = package.base65536.decode(data_base65536)
+            data_json = bz2.decompress(data_compressed.encode())
             self.dom_elements["textarea_import_json"].value = data_json.decode("utf-8")
             self.import_from_json(data_json.decode("utf-8"))
             success = True
@@ -624,7 +623,7 @@ class Simulator:
         return success
 
     def export_to_json(self) -> str:
-        data_json: dict[str] = {
+        data_json: dict = {
             "format_version" : self._export_json_format_version,
             "status" : {
                 "base_lv" : int(self.dom_elements["base_lv"].value),
@@ -689,11 +688,11 @@ class Simulator:
                 data_json["additional_info"][key] = self.load_datas["additional_info"][key]
 
         # dict => json
-        data_json = json.dumps(data_json, ensure_ascii=False, indent=4)
+        data_json_str: str = json.dumps(data_json, ensure_ascii=False, indent=4)
 
-        self.dom_elements["textarea_import_json"].value = data_json
+        self.dom_elements["textarea_import_json"].value = data_json_str
 
-        return data_json
+        return data_json_str
 
     def export_to_url(self) -> str:
         data_json: str = self.export_to_json()
@@ -944,7 +943,7 @@ def main():
     prefix_url: str = f"{location.protocol}//{location.host}/simulator/"
     instance = Simulator(prefix_url)
 
-    result_import: bool = None
+    result_import: bool|None = None
     if str(query_strings) != "":
         data_base_encoded = urllib.parse.unquote(str(query_strings))
         result_import = instance.import_from_base65536(data_base_encoded[:-1])
