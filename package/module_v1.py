@@ -1,10 +1,8 @@
 import math
 import traceback
-from lark import Lark
 
 import requests
 
-from package.visitor import Visitor, Environment
 from package.abstract_module import AbstractCalculationModule
 
 class CalculationModule(AbstractCalculationModule):
@@ -79,11 +77,6 @@ class CalculationModule(AbstractCalculationModule):
         # 次回以降の処理のため記録
         self.job_class_name = job_class
         self.job_class_idx = job_class_idx
-
-        # Lark
-        rule = open("./package/grammer.lark").read()
-        self.lark_parser = Lark(rule, start="program", parser="lalr")
-        self.visitor = Visitor()
 
         self._valid = True
 
@@ -189,11 +182,3 @@ class CalculationModule(AbstractCalculationModule):
                             + (math.sqrt(((self._memory["agi_base"] + self._memory["agi_bonus"]) * 3027 / 300)
                             + ((self._memory["dex_base"] + self._memory["dex_bonus"]) * 55 / 300)) * (1 - aspd_penalty)) + shield_correction_point) * on_horseback_point * 10)/10
         self.dom_elements["aspd"].value = status_aspd
-
-        code:str = ""
-        try:
-            tree = self.lark_parser.parse(code)
-            env = Environment(self._memory)
-            self.visitor.visit(tree, env)
-        except Exception as ex:
-            traceback.print_exception(ex)

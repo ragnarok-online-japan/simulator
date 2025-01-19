@@ -12,8 +12,6 @@
         "/simulator/assets/font/Melete-Regular.otf": "./assets/font/Melete-Regular.otf",
         "/simulator/package/abstract_module.py": "./package/abstract_module.py",
         "/simulator/package/module_v1.py": "./package/module_v1.py",
-        "/simulator/package/base65536.py": "./package/base65536.py",
-        "/simulator/package/visitor.py": "./package/visitor.py",
-        "/simulator/package/grammer.lark": "./package/grammer.lark"
+        "/simulator/package/base65536.py": "./package/base65536.py"
     }
 }
