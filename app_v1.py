@@ -3,10 +3,9 @@ from datetime import datetime
 import re
 from PIL import Image, ImageFont, ImageDraw
 from io import BytesIO
-from js import location,URLSearchParams,localStorage,window
+from js import location,URLSearchParams,localStorage,window # type: ignore
 from pyscript import document
 import base64
-import binascii
 import bz2
 import json
 import pyodide_http
