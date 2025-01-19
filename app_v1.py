@@ -267,7 +267,7 @@ class Simulator:
 
                 item_name = item["displayname"]
                 if "slot" in item:
-                    item_name = "{:s}[{:d}]".format(item_name, item["slot"])
+                    item_name = f"{item_name} [{item['slot']}]"
 
                 option = document.createElement("option")
                 option.value = item_name

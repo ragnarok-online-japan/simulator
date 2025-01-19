@@ -6,9 +6,6 @@ import requests
 from package.abstract_module import AbstractCalculationModule
 
 class CalculationModule(AbstractCalculationModule):
-    _valid: bool = False
-    _memory: dict = {}
-
     def __init__(self, prefix_url: str, load_datas: dict, dom_elements: dict) -> None:
         # init
         self.prefix_url = prefix_url
@@ -78,10 +75,10 @@ class CalculationModule(AbstractCalculationModule):
         self.job_class_name = job_class
         self.job_class_idx = job_class_idx
 
-        self._valid = True
+        self.set_valid(True)
 
     def pre_calc(self) -> None:
-        if self._valid != True:
+        if self.is_valid() != True:
             return
 
         # 装備, スキルなどの事前処理

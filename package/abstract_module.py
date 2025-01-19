@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 
 class AbstractCalculationModule(ABC):
     _valid: bool = False
+    _memory: dict = {}
+
     prefix_url: str = "/"
     dom_elements: dict = {}
     load_datas: dict = {}
@@ -20,6 +22,9 @@ class AbstractCalculationModule(ABC):
     def is_valid(self) -> bool:
         return self._valid
 
+    def set_valid(self, valid: bool) -> None:
+        self._valid = valid
+
     def get_job_class_name(self) -> str|None:
         return self.job_class_name
 
@@ -27,7 +32,7 @@ class AbstractCalculationModule(ABC):
         return self.job_class_idx
 
     @abstractmethod
-    def __init__(self, prefix_url: str, dom_elements: dict, load_datas: dict) -> None:
+    def __init__(self, prefix_url: str, load_datas: dict, dom_elements: dict) -> None:
         pass
 
     @abstractmethod
@@ -35,5 +40,5 @@ class AbstractCalculationModule(ABC):
         pass
 
     @abstractmethod
-    def calculation(self) -> None:
-        pass
+    def calculation(self) -> dict:
+        return {}
