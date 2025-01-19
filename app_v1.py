@@ -20,10 +20,10 @@ pyodide_http.patch_all()
 class Simulator:
     _initialized: bool = False
     _export_json_format_version: int = 1
-    _prefix_url: str = "/"
-    _suffix_url: str = "v1.html"
+    prefix_url: str = "/"
+    suffix_url: str = "v1.html"
 
-    _calculation_module: CalculationModule|None = None
+    calculation_module: CalculationModule|None = None
     job_class_name: str|None = None
 
     dom_elements: dict = {}
@@ -116,9 +116,9 @@ class Simulator:
     }
 
     def __init__(self, prefix_url: str, suffix_url: str|None = None, rood_url: str|None = None) -> None:
-        self._prefix_url = prefix_url
+        self.prefix_url = prefix_url
         if suffix_url is not None:
-            self._suffix_url = suffix_url
+            self.suffix_url = suffix_url
         if rood_url is not None:
             self._rood_url = rood_url
 
@@ -206,12 +206,12 @@ class Simulator:
         self.dom_elements["skill_lv"] = {}
         self.dom_elements["skill_enable"] = {}
 
-        response = requests.get(self._prefix_url + f"data/skill_list.json", headers=self.headers)
+        response = requests.get(self.prefix_url + f"data/skill_list.json", headers=self.headers)
         if response.status_code == 200:
             self.load_datas["skill_list"] = response.json()
 
         if len(self.load_datas["skill_list"]) > 0:
-            response = requests.get(self._prefix_url + f"data/skill_list_update.json", headers=self.headers)
+            response = requests.get(self.prefix_url + f"data/skill_list_update.json", headers=self.headers)
             if response.status_code == 200:
                 skill_list_update = response.json()
                 for key in skill_list_update.keys():
@@ -236,7 +236,7 @@ class Simulator:
                 datalist_skill.appendChild(option)
 
         # アイテム
-        response = requests.get(self._prefix_url + f"data/items.json", headers=self.headers)
+        response = requests.get(self.prefix_url + f"data/items.json", headers=self.headers)
         if response.status_code == 200:
             self.load_datas["items"] = response.json()
 
@@ -253,7 +253,7 @@ class Simulator:
             datalist_equipment_accessory1 = document.getElementById("datalist_equipment_accessory1")
             datalist_equipment_accessory2 = document.getElementById("datalist_equipment_accessory2")
 
-            response = requests.get(self._prefix_url + f"data/items_update.json", headers=self.headers)
+            response = requests.get(self.prefix_url + f"data/items_update.json", headers=self.headers)
             if response.status_code == 200:
                 items_update = response.json()
                 for key in items_update.keys():
@@ -317,8 +317,6 @@ class Simulator:
 
                 elif item["type"] == "アクセサリー(2)":
                     datalist_equipment_accessory2.appendChild(option)
-                else:
-                    print(item["type"])
 
         # セーブ/ロード
         div_save_load = document.getElementById("div_save_load")
@@ -713,7 +711,7 @@ class Simulator:
         # bz2 compressed => base64
         data_base64 = base64.urlsafe_b64encode(data_compressed).decode("utf-8")
 
-        url = self._prefix_url + self._suffix_url + "?" + data_base64 + "#main"
+        url = self.prefix_url + self.suffix_url + "?" + data_base64 + "#main"
         return url
 
     def onclick_export_to_url(self, event = None) -> None:
@@ -805,16 +803,17 @@ class Simulator:
         try:
             # calculation
             job_class_name = self.dom_elements["job_class"].value.strip()
-            if self._calculation_module is None \
+            if self.calculation_module is None \
                 or (self.job_class_name is not None and self.job_class_name != job_class_name):
                 # Re-initalize
-                self._calculation_module = CalculationModule(self._prefix_url, self.dom_elements, self.load_datas)
+                self.calculation_module = CalculationModule(self.prefix_url, self.load_datas, self.dom_elements)
+                self.calculation_module.load_dom_elemets()
 
-            if self._calculation_module.is_valid() == True:
+            if self.calculation_module.is_valid() == True:
                 # save
                 self.job_class_name = job_class_name
 
-                job_class_idx = self._calculation_module.get_job_class_idx()
+                job_class_idx = self.calculation_module.get_job_class_idx()
                 job_data = self.load_datas["job_classes"][job_class_idx]
 
                 maximum = job_data["base_lv_max"]
@@ -840,10 +839,11 @@ class Simulator:
                         self.dom_elements[f"{key}_base"].value = maximum
 
                 # 計算前の準備
-                self._calculation_module.pre_calc()
+                self.calculation_module.pre_calc()
 
                 # 計算
-                self._calculation_module.calculation()
+                result = self.calculation_module.calculation()
+                self.calculation_module.set_dom_elements(result)
 
         except Exception as ex:
             traceback.print_exception(ex)
